@@ -282,6 +282,21 @@ def main():
     print(f"Loading model: {model_name}")
     try:
         model = Qwen2_5OmniForConditionalGeneration.from_pretrained(model_name, **model_kwargs)
+    except ImportError as exc:
+        # Common on clusters without flash-attn installed while config requests flash_attention_2.
+        msg = str(exc)
+        if model_kwargs.get("attn_implementation") == "flash_attention_2" and (
+            "flash_attn" in msg or "FlashAttention2" in msg
+        ):
+            print(
+                "[WARN] flash_attention_2 is configured but flash_attn is unavailable. "
+                "Retrying with default attention implementation."
+            )
+            retry_kwargs = dict(model_kwargs)
+            retry_kwargs.pop("attn_implementation", None)
+            model = Qwen2_5OmniForConditionalGeneration.from_pretrained(model_name, **retry_kwargs)
+        else:
+            raise
     except KeyError as exc:
         raise RuntimeError(
             "Current transformers version does not support Qwen2.5-Omni.\n"

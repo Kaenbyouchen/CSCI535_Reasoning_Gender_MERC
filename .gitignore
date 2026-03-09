@@ -1,0 +1,42 @@
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+
+# Python cache
+__pycache__/
+*.py[cod]
+*$py.class
+
+# Virtual environments
+.venv/
+venv/
+env/
+
+# Build / packaging artifacts
+build/
+dist/
+*.egg-info/
+
+# Logs
+*.log
+logs/
+
+# Experiment outputs
+result/
+
+# Large datasets / raw media
+MELD.Raw/
+data/
+MELD.Features.Models/
+
+# Model/cache directories
+.cache/
+**/.cache/
+hf_cache/
+huggingface/
+
+# Temporary media generated during runs
+tmp_media/
+**/tmp_media/

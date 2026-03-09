@@ -1,0 +1,6 @@
+git init
+git add .
+git commit -m "Initial commit: MERC baselines and configs"
+git branch -M main
+git remote add origin https://github.com/Kaenbyouchen/CSCI535_Reasoning_Gender_MERC.git
+git push -u origin main

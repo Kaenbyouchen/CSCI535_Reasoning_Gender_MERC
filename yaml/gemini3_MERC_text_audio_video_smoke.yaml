@@ -1,11 +1,9 @@
 model:
-  alias: gemini3
-  # Gemini 3.1 Flash Lite baseline
+  alias: gemini3_tav_smoke
   api_model_name: gemini-3.1-flash-lite-preview
   api_key_env: GEMINI_API_KEY
   temperature: 0.0
   max_output_tokens: 1024
-  # 单次 Gemini API 调用硬超时（秒）
   request_timeout_seconds: 90
   max_retries: 3
   retry_sleep_seconds: 2
@@ -24,21 +22,16 @@ paths:
   result_dir: result
 
 eval:
-  modalities: [audio]
-  # 视频采样率（每秒采样多少帧）
-  frame_sample_fps: 8
-  # name: 原始姓名; anon: 匿名为P1/P2但保留同一说话人连续性; none: 不提供身份
+  modalities: [text, audio, video]
+  frame_sample_fps: 1
   speaker_mode: anon
   log_every_n: 50
   max_samples: null
   sample_retries: 2
-  # 单条样本（utterance）或单个 dialogue 的总耗时上限（秒）
   sample_timeout_seconds: 240
-  # 达到该时长后打印心跳告警，帮助识别“看起来卡住”的样本
   stall_log_seconds: 90
   context_window_max: 3
-  # utterance: 逐句预测（可配固定窗口上下文）；dialogue: 一次输入整段对话并输出每句标签。
-  inference_unit: dialogue
+  inference_unit: utterance
 
 prompt:
   utterance:

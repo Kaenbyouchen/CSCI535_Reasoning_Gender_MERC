@@ -1,5 +1,6 @@
 import argparse
 import csv
+import logging
 import os
 import time
 from collections import defaultdict
@@ -51,6 +52,11 @@ from gpt52 import (
     render_template,
     write_json,
 )
+
+
+class _SuppressQwenPromptWarning(logging.Filter):
+    def filter(self, record):
+        return "System prompt modified, audio output may not work as expected" not in record.getMessage()
 
 
 def parse_torch_dtype(dtype_text):
@@ -176,6 +182,8 @@ def main():
     args = parser.parse_args()
 
     cfg = read_yaml(args.config)
+    # Suppress repetitive non-critical warning emitted by qwen_omni_utils.
+    logging.getLogger().addFilter(_SuppressQwenPromptWarning())
     modalities = [m.lower() for m in cfg["eval"]["modalities"]]
     include_text_input = "text" in modalities
     model_name = cfg["model"]["hf_model_name"]
@@ -395,12 +403,20 @@ def main():
                         },
                     )
                     user_content = [{"type": "text", "text": user_text}]
+                    audio_attached_by_uid = {}
+                    video_attached_by_uid = {}
                     for r in drows:
+                        uid = str(r.get("Utterance_ID", "")).strip()
+                        audio_attached_by_uid[uid] = False
+                        video_attached_by_uid[uid] = False
+                    for r in drows:
+                        uid = str(r.get("Utterance_ID", "")).strip()
                         clip = resolver.resolve("test", r["Dialogue_ID"], r["Utterance_ID"])
                         if "video" in modalities:
                             if clip is None:
                                 skipped_video_for_missing += 1
                             else:
+                                video_attached_by_uid[uid] = True
                                 user_content.append(
                                     {
                                         "type": "text",
@@ -419,6 +435,7 @@ def main():
                                 if wav is None:
                                     skipped_audio_for_missing += 1
                                 else:
+                                    audio_attached_by_uid[uid] = True
                                     user_content.append(
                                         {
                                             "type": "text",
@@ -481,6 +498,25 @@ def main():
                                 "gold_emotion": g,
                                 "pred_emotion": p,
                                 "is_correct": int(g == p),
+                                "resolved_system_prompt": dialogue_system_prompt,
+                                "resolved_user_prompt": user_text,
+                                "audio_attached": bool(
+                                    audio_attached_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), False
+                                    )
+                                ),
+                                "video_attached": bool(
+                                    video_attached_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), False
+                                    )
+                                ),
+                                "video_frames_count": (
+                                    1
+                                    if video_attached_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), False
+                                    )
+                                    else 0
+                                ),
                                 "raw_model_output": raw_output,
                             }
                         )
@@ -510,7 +546,7 @@ def main():
             g_sub = [gold[i] for i in idxs]
             p_sub = [pred[i] for i in idxs]
             gender_metrics[gender] = compute_metrics(g_sub, p_sub, EMOTIONS)
-            gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS)
+            gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS, g_sub)
 
         metrics = {
             "model": model_name,
@@ -525,7 +561,7 @@ def main():
             "overall": overall_metrics,
             "by_gender": gender_metrics,
             "predicted_emotion_distribution": {
-                "overall": compute_pred_distribution(pred, EMOTIONS),
+                "overall": compute_pred_distribution(pred, EMOTIONS, gold),
                 "by_gender": gender_pred_distributions,
             },
             "skipped_no_gender": skipped_no_gender,
@@ -635,10 +671,13 @@ def main():
                         )
 
                     user_content = [{"type": "text", "text": user_text}]
+                    sample_video_attached = False
+                    sample_audio_attached = False
                     if "video" in modalities:
                         if clip is None:
                             skipped_video_for_missing += 1
                         else:
+                            sample_video_attached = True
                             user_content.append({"type": "video", "video": str(clip)})
 
                     if "audio" in modalities:
@@ -649,6 +688,7 @@ def main():
                             if wav is None:
                                 skipped_audio_for_missing += 1
                             else:
+                                sample_audio_attached = True
                                 user_content.append({"type": "audio", "audio": str(wav)})
 
                     conversation = [
@@ -697,6 +737,11 @@ def main():
                             "gold_emotion": g,
                             "pred_emotion": p,
                             "is_correct": int(g == p),
+                            "resolved_system_prompt": system_prompt,
+                            "resolved_user_prompt": user_text,
+                            "audio_attached": bool(sample_audio_attached),
+                            "video_attached": bool(sample_video_attached),
+                            "video_frames_count": 1 if sample_video_attached else 0,
                             "raw_model_output": raw_output,
                         }
                     )
@@ -739,7 +784,7 @@ def main():
         g_sub = [gold[i] for i in idxs]
         p_sub = [pred[i] for i in idxs]
         gender_metrics[gender] = compute_metrics(g_sub, p_sub, EMOTIONS)
-        gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS)
+        gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS, g_sub)
 
     metrics = {
         "model": model_name,
@@ -754,7 +799,7 @@ def main():
         "overall": overall_metrics,
         "by_gender": gender_metrics,
         "predicted_emotion_distribution": {
-            "overall": compute_pred_distribution(pred, EMOTIONS),
+            "overall": compute_pred_distribution(pred, EMOTIONS, gold),
             "by_gender": gender_pred_distributions,
         },
         "skipped_no_gender": skipped_no_gender,

@@ -4,3 +4,47 @@ git commit -m "Initial commit: MERC baselines and configs"
 git branch -M main
 git remote add origin https://github.com/Kaenbyouchen/CSCI535_Reasoning_Gender_MERC.git
 git push -u origin main
+
+
+本地push：
+cd "/Users/weisu/CSCI535/Project相关/MELD-master"
+git add .
+git commit -m "update: Before midterm"
+git push origin main
+
+CARC pull：
+cd /project2/msoleyma_1026/RuiZhang/CSCI535_Reasoning_Gender_MERC
+git pull origin main
+
+
+# 0) 进入项目
+cd /project2/msoleyma_1026/RuiZhang/CSCI535_Reasoning_Gender_MERC
+
+# 1) 创建并激活 legacy 环境
+conda create -n meld_legacy python=3.10 -y
+conda activate meld_legacy
+
+# 2) 安装旧 baseline 依赖（与新模型环境分离）
+pip install --upgrade pip
+pip install "numpy<2" pandas scikit-learn
+pip install "tensorflow==2.13.1" "keras==2.13.1"
+pip install openai PyYAML tqdm
+
+# 3) 对齐旧资源路径（确保 features/models 可被 baseline 读取）
+mkdir -p data
+ln -sfn ../MELD.Features.Models/features data/pickles
+ln -sfn ../MELD.Features.Models/models data/models
+
+# 4) 检查关键文件
+ls data/pickles/data_emotion.p
+ls data/models/text_weights_emotion.hdf5
+ls data/models/audio_weights_emotion.hdf5
+ls data/models/bimodal_weights_emotion.hdf5
+
+# 5) 先跑 text smoke test
+python baseline/legacy_meld_eval.py --modality text --max-samples 20
+
+# 6) 跑全三模态
+python baseline/legacy_meld_eval.py --modality text
+python baseline/legacy_meld_eval.py --modality audio
+python baseline/legacy_meld_eval.py --modality bimodal

@@ -1,0 +1,24 @@
+model:
+  alias: legacy_baseline
+  legacy_model_name: bcLSTM
+  classification_mode: Emotion
+  # The original baseline stores model weights by modality.
+  weights_path_template: ./data/models/{modality}_weights_emotion.hdf5
+
+dataset:
+  name: MELD
+  is_origin: true
+
+task:
+  name: MERC
+  labels: [Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear]
+
+paths:
+  test_csv: data/MELD/test_sent_emo.csv
+  result_dir: result
+
+eval:
+  # text | audio | bimodal
+  modality: text
+  speaker_mode: anon
+  max_samples: null

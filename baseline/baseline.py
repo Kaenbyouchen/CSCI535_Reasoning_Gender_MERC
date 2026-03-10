@@ -144,6 +144,10 @@ class bc_LSTM:
 		def reshaper(x):
 			return K.expand_dims(x, axis=3)
 
+		def reshaper_output_shape(input_shape):
+			shape = list(input_shape)
+			return (shape[0], shape[1], shape[2], 1)
+
 		def flattener(x):
 			x = K.reshape(x, [-1, x.shape[1]*x.shape[3]])
 			return x
@@ -161,7 +165,7 @@ class bc_LSTM:
 			
 			#cnn-sent
 			emb_output = embedding(local_input)
-			reshape = Lambda(reshaper)(emb_output)
+			reshape = Lambda(reshaper, output_shape=reshaper_output_shape)(emb_output)
 			concatenated_tensor = Concatenate(axis=1)([maxpool_0(conv_0(reshape)), maxpool_1(conv_1(reshape)), maxpool_2(conv_2(reshape))])
 			flatten = Lambda(flattener, output_shape=flattener_output_shape,)(concatenated_tensor)
 			dense_output = dense_func(flatten)
@@ -170,7 +174,10 @@ class bc_LSTM:
 
 		def stack(x):
 			return K.stack(x, axis=1)
-		cnn_outputs = Lambda(stack)(cnn_output)
+		def stack_output_shape(input_shape):
+			shape = list(input_shape)
+			return (shape[0], self.sequence_length, shape[1])
+		cnn_outputs = Lambda(stack, output_shape=stack_output_shape)(cnn_output)
 
 		masked = Masking(mask_value =0)(cnn_outputs)
 		lstm = Bidirectional(LSTM(300, activation='relu', return_sequences = True, dropout=0.3))(masked)

@@ -462,16 +462,28 @@ def compute_metrics(gold, pred, labels):
     }
 
 
-def compute_pred_distribution(pred, labels):
+def compute_pred_distribution(pred, labels, gold=None):
     total = len(pred)
     counts = {lab: 0 for lab in labels}
     for p in pred:
         if p in counts:
             counts[p] += 1
+    gold_counts = None
+    if gold is not None:
+        gold_counts = {lab: 0 for lab in labels}
+        for g in gold:
+            if g in gold_counts:
+                gold_counts[g] += 1
     emotions = {}
     if total == 0:
         for lab in labels:
-            emotions[lab] = {"count": 0, "ratio_percent": 0.0}
+            item = {"count": 0, "ratio_percent": 0.0}
+            if gold_counts is not None:
+                gt = gold_counts[lab]
+                item["gt_count"] = gt
+                item["pred_over_gt_fraction"] = f"0/{gt}"
+                item["pred_over_gt_ratio"] = (0.0 if gt > 0 else None)
+            emotions[lab] = item
         return {"total_samples": 0, "emotions": emotions}
 
     running = 0.0
@@ -483,7 +495,13 @@ def compute_pred_distribution(pred, labels):
         else:
             # Ensure percentages sum to exactly 100 for readability.
             ratio = 100.0 - running
-        emotions[lab] = {"count": c, "ratio_percent": ratio}
+        item = {"count": c, "ratio_percent": ratio}
+        if gold_counts is not None:
+            gt = gold_counts[lab]
+            item["gt_count"] = gt
+            item["pred_over_gt_fraction"] = f"{c}/{gt}"
+            item["pred_over_gt_ratio"] = ((c / gt) if gt > 0 else None)
+        emotions[lab] = item
     return {"total_samples": total, "emotions": emotions}
 
 
@@ -630,11 +648,11 @@ def main():
     # 如果最大样本数不为空，则转换为整数
     if max_samples is not None:
         max_samples = int(max_samples)
-    # 如果最大样本数小于等于 0，则抛出异常
-    if max_samples <= 0:
-        raise ValueError("max_samples must be > 0.")
-    # 打印 demo 模式启用信息
-    print(f"Demo mode enabled: evaluating first {max_samples} samples.")
+        # 如果最大样本数小于等于 0，则抛出异常
+        if max_samples <= 0:
+            raise ValueError("max_samples must be > 0.")
+        # 打印 demo 模式启用信息
+        print(f"Demo mode enabled: evaluating first {max_samples} samples.")
 
     # 获取上下文窗口最大值
     cfg_context_window_max = cfg.get("eval", {}).get("context_window_max", 0)
@@ -740,8 +758,15 @@ def main():
                         },
                     )
                     content = [{"type": "input_text", "text": user_text}]
+                    audio_attached_by_uid = {}
+                    video_frames_by_uid = {}
+                    for r in drows:
+                        uid = str(r.get("Utterance_ID", "")).strip()
+                        audio_attached_by_uid[uid] = False
+                        video_frames_by_uid[uid] = 0
 
                     for r in drows:
+                        uid = str(r.get("Utterance_ID", "")).strip()
                         clip = resolver.resolve("test", r["Dialogue_ID"], r["Utterance_ID"])
                         if "video" in modalities:
                             if clip is None:
@@ -751,6 +776,7 @@ def main():
                                 if not frames:
                                     skipped_video_for_missing += 1
                                 else:
+                                    video_frames_by_uid[uid] = len(frames)
                                     content.append(
                                         {
                                             "type": "input_text",
@@ -775,6 +801,7 @@ def main():
                                 if wav is None:
                                     skipped_audio_for_missing += 1
                                 else:
+                                    audio_attached_by_uid[uid] = True
                                     content.append(
                                         {
                                             "type": "input_text",
@@ -895,6 +922,24 @@ def main():
                                 "gold_emotion": g,
                                 "pred_emotion": p,
                                 "is_correct": int(g == p),
+                                "resolved_system_prompt": dialogue_system_prompt,
+                                "resolved_user_prompt": user_text,
+                                "audio_attached": bool(
+                                    audio_attached_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), False
+                                    )
+                                ),
+                                "video_attached": int(
+                                    video_frames_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), 0
+                                    )
+                                    > 0
+                                ),
+                                "video_frames_count": int(
+                                    video_frames_by_uid.get(
+                                        str(r.get("Utterance_ID", "")).strip(), 0
+                                    )
+                                ),
                                 "raw_model_output": raw_output,
                             }
                         )
@@ -933,7 +978,7 @@ def main():
             g_sub = [gold[i] for i in idxs]
             p_sub = [pred[i] for i in idxs]
             gender_metrics[gender] = compute_metrics(g_sub, p_sub, EMOTIONS)
-            gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS)
+            gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS, g_sub)
         metrics = {
             "model": model_name,
             "model_alias": model_alias,
@@ -950,7 +995,7 @@ def main():
             "overall": overall_metrics,
             "by_gender": gender_metrics,
             "predicted_emotion_distribution": {
-                "overall": compute_pred_distribution(pred, EMOTIONS),
+                "overall": compute_pred_distribution(pred, EMOTIONS, gold),
                 "by_gender": gender_pred_distributions,
             },
             "skipped_no_gender": skipped_no_gender,
@@ -1054,6 +1099,8 @@ def main():
                             },
                         )
                     content = [{"type": "input_text", "text": user_text}]
+                    sample_video_frames_count = 0
+                    sample_audio_attached = False
 
                     if "video" in modalities:
                         if clip is None:
@@ -1063,6 +1110,7 @@ def main():
                             if not frames:
                                 skipped_video_for_missing += 1
                             else:
+                                sample_video_frames_count = len(frames)
                                 for fr in frames:
                                     content.append(
                                         {
@@ -1079,6 +1127,7 @@ def main():
                             if wav is None:
                                 skipped_audio_for_missing += 1
                             else:
+                                sample_audio_attached = True
                                 content.append(
                                     {
                                         "type": "input_audio",
@@ -1188,6 +1237,11 @@ def main():
                             "gold_emotion": g,
                             "pred_emotion": p,
                             "is_correct": int(g == p),
+                            "resolved_system_prompt": system_prompt,
+                            "resolved_user_prompt": user_text,
+                            "audio_attached": bool(sample_audio_attached),
+                            "video_attached": int(sample_video_frames_count > 0),
+                            "video_frames_count": int(sample_video_frames_count),
                             "raw_model_output": raw_output,
                         }
                     )
@@ -1239,7 +1293,7 @@ def main():
         g_sub = [gold[i] for i in idxs]
         p_sub = [pred[i] for i in idxs]
         gender_metrics[gender] = compute_metrics(g_sub, p_sub, EMOTIONS)
-        gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS)
+        gender_pred_distributions[gender] = compute_pred_distribution(p_sub, EMOTIONS, g_sub)
 
     metrics = {
         "model": model_name,
@@ -1257,7 +1311,7 @@ def main():
         "overall": overall_metrics,
         "by_gender": gender_metrics,
         "predicted_emotion_distribution": {
-            "overall": compute_pred_distribution(pred, EMOTIONS),
+            "overall": compute_pred_distribution(pred, EMOTIONS, gold),
             "by_gender": gender_pred_distributions,
         },
         "skipped_no_gender": skipped_no_gender,

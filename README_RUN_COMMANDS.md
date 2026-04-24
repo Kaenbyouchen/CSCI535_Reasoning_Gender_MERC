@@ -19,10 +19,10 @@ python baseline/gemini3.py
 python baseline/qwen25.py
 
 # 5) 四个新 baseline 的 smoke test（快速检查）
-python baseline/gpt52.py --max-samples 50
+python baseline/gpt52.py --max-samples 5
 python baseline/gpt4o_audio_preview.py --max-samples 50
 python baseline/gemini3.py --max-samples 50
-python baseline/qwen25.py --max-samples 20
+python baseline/qwen25.py --max-samples 10
 
 # 6) 需要切换配置时（示例）
 python baseline/gpt52.py --config yaml/gpt52_MERC.yaml

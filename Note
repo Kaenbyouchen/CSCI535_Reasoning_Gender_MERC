@@ -1,6 +1,9 @@
-git init
+本地push：
+cd "/Users/weisu/CSCI535/Project相关/MELD-master"
 git add .
-git commit -m "Initial commit: MERC baselines and configs"
-git branch -M main
-git remote add origin https://github.com/Kaenbyouchen/CSCI535_Reasoning_Gender_MERC.git
-git push -u origin main
+git commit -m "update: Before midterm"
+git push origin main
+
+CARC pull：
+cd /project2/msoleyma_1026/RuiZhang/CSCI535_Reasoning_Gender_MERC
+git pull origin main

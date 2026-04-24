@@ -15,11 +15,11 @@ model:
   cache_dir: null
   # Generation config
   temperature: 0.0
-  max_output_tokens: 128
+  max_output_tokens: 1024
   max_retries: 2
   retry_sleep_seconds: 2
   # Qwen Omni options
-  use_audio_in_video: true
+  use_audio_in_video: false
   # MERC only needs text output, disable speech decoder to save GPU memory
   disable_talker: true
   return_audio: false
@@ -40,7 +40,7 @@ paths:
 eval:
   # recommended default for this local model baseline:
   # [text], [text, audio], [text, video], [text, audio, video]
-  modalities: [text, audio]
+  modalities: [text, audio, video]
   speaker_mode: anon
   log_every_n: 20
   max_samples: null

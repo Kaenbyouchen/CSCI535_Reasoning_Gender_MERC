@@ -40,3 +40,4 @@ huggingface/
 # Temporary media generated during runs
 tmp_media/
 **/tmp_media/
+nohup.out

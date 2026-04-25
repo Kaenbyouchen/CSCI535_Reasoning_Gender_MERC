@@ -1,0 +1,198 @@
+[
+  {
+    "run_dir": "result/qwen25_omni7b_MELD_MERC_Origin_20260308_210628",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b",
+    "dataset": "MELD",
+    "task": "MERC",
+    "inference_unit": "dialogue",
+    "speaker_mode": "anon",
+    "modalities": [
+      "text"
+    ],
+    "context_window_max": 3,
+    "overall_accuracy": 0.5625240477106579,
+    "overall_weighted_f1": 0.5045912549254802,
+    "timestamp": "2026-03-08T21:32:32"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_MELD_MERC_Origin_20260308_224040",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b",
+    "dataset": "MELD",
+    "task": "MERC",
+    "inference_unit": "dialogue",
+    "speaker_mode": "anon",
+    "modalities": [
+      "audio"
+    ],
+    "context_window_max": 3,
+    "overall_accuracy": 0.4853508095605243,
+    "overall_weighted_f1": 0.4065108858972443,
+    "timestamp": "2026-03-08T23:23:06"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_MELD_MERC_Origin_20260308_232629",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b",
+    "dataset": "MELD",
+    "task": "MERC",
+    "inference_unit": "dialogue",
+    "speaker_mode": "anon",
+    "modalities": [
+      "text",
+      "audio"
+    ],
+    "context_window_max": 3,
+    "overall_accuracy": 0.5138781804163454,
+    "overall_weighted_f1": 0.43560194962219295,
+    "timestamp": "2026-03-09T00:03:52"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_MELD_MERC_Origin_20260309_000448",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b",
+    "dataset": "MELD",
+    "task": "MERC",
+    "inference_unit": "dialogue",
+    "speaker_mode": "anon",
+    "modalities": [
+      "text",
+      "audio",
+      "video"
+    ],
+    "context_window_max": 3,
+    "overall_accuracy": 0.5,
+    "overall_weighted_f1": 0.516025641025641,
+    "timestamp": "2026-03-09T01:48:23"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_MELD_MERC_Origin_20260309_110956",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b",
+    "dataset": "MELD",
+    "task": "MERC",
+    "inference_unit": "utterance",
+    "speaker_mode": "anon",
+    "modalities": [
+      "text",
+      "audio",
+      "video"
+    ],
+    "context_window_max": 3,
+    "overall_accuracy": 0.5829408686551544,
+    "overall_weighted_f1": 0.5950613909655584,
+    "timestamp": "2026-03-09T14:42:40"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_CF_text+audio_20260424_204609",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "counterfactual",
+    "modalities": [
+      "text",
+      "audio"
+    ],
+    "n_samples_evaluated": 20,
+    "overall_accuracy": 0.3,
+    "overall_weighted_f1": 0.3071428571428571,
+    "timestamp": "2026-04-24T20:46:39"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio_20260424_204925",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.5162337662337663,
+    "overall_weighted_f1": 0.5247421313374842,
+    "timestamp": "2026-04-24T21:05:53"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_text+audio_20260424_210555",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "text",
+      "audio"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.5955473098330241,
+    "overall_weighted_f1": 0.5991412845636335,
+    "timestamp": "2026-04-24T21:22:12"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260424_212214",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.4615027829313544,
+    "overall_weighted_f1": 0.4612065877825302,
+    "timestamp": "2026-04-24T23:48:01"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_text+audio+video_20260424_234803",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "text",
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.5579777365491652,
+    "overall_weighted_f1": 0.553096337657959,
+    "timestamp": "2026-04-25T02:14:27"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_CF_audio_20260425_021431",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "counterfactual",
+    "modalities": [
+      "audio"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.3914656771799629,
+    "overall_weighted_f1": 0.42051053058461973,
+    "timestamp": "2026-04-25T02:31:05"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_CF_text+audio_20260425_023107",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "counterfactual",
+    "modalities": [
+      "text",
+      "audio"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.5602968460111317,
+    "overall_weighted_f1": 0.577561912939189,
+    "timestamp": "2026-04-25T02:47:07"
+  }
+]

@@ -1,0 +1,118 @@
+model:
+  alias: qwen25_omni7b
+  hf_model_name: Qwen/Qwen2.5-Omni-7B
+  hf_token_env: HF_TOKEN
+  torch_dtype: bf16
+  device_map: auto
+  attn_implementation: flash_attention_2
+  low_cpu_mem_usage: true
+  cache_dir: null
+  temperature: 0.0
+  max_output_tokens: 1024
+  max_retries: 2
+  retry_sleep_seconds: 2
+  use_audio_in_video: false
+  disable_talker: true
+  return_audio: false
+dataset:
+  name: MELD
+  is_origin: true
+task:
+  name: MERC
+  labels:
+  - Anger
+  - Disgust
+  - Sadness
+  - Joy
+  - Neutral
+  - Surprise
+  - Fear
+paths:
+  test_csv: data/MELD/test_sent_emo.csv
+  raw_dir: MELD.Raw
+  result_dir: result
+eval:
+  modalities:
+  - text
+  - audio
+  - video
+  speaker_mode: anon
+  log_every_n: 20
+  max_samples: null
+  sample_retries: 2
+  sample_timeout_seconds: 600
+  stall_log_seconds: 180
+  context_window_max: 3
+  inference_unit: utterance
+prompt:
+  utterance:
+    system: 'You are an expert evaluator for Multimodal Emotion Recognition in Conversation
+      (MERC).
+
+      You must classify the target utterance into exactly one emotion from:
+
+      Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+
+      Use all provided modalities if available.
+
+      Output strictly JSON only, with this schema:
+
+      {"emotion": "<one of the seven labels>"}
+
+      '
+    user_template: 'Target utterance information:
+
+      - Speaker: {speaker}
+
+      - Dialogue_ID: {dialogue_id}
+
+      - Utterance_ID: {utterance_id}
+
+      - Text: {utterance}
+
+      Please predict the emotion label for this utterance.
+
+      '
+    history_prefix_template: 'Dialogue history (previous utterances from same dialogue):
+
+      {history_block}
+
+
+      {user_text}
+
+      '
+  dialogue:
+    system: 'You are an expert evaluator for Multimodal Emotion Recognition in Conversation
+      (MERC).
+
+      Given a full dialogue with multiple utterances, predict one emotion label for
+      EACH utterance.
+
+      Each utterance includes a speaker identifier; use speaker identity and turn-taking
+      context.
+
+      Valid labels: Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+
+      Output strictly JSON only with schema:
+
+      {"predictions":[{"utterance_id":"<id>","emotion":"<one label>"}]}
+
+      '
+    user_template: 'Dialogue_ID: {dialogue_id}
+
+      Utterance count: {utterance_count}
+
+      Dialogue utterances in chronological order:
+
+      {dialogue_block}
+
+      Note: each line is formatted as [Uid] Speaker=<id>: <text> (e.g., Speaker=P1).
+
+
+      Return strictly JSON with schema:
+
+      {"predictions":[{"utterance_id":"<id>","emotion":"<one of seven labels>"}]}
+
+      '
+    video_prefix_template: 'Video for U{utterance_id}:'
+    audio_prefix_template: 'Audio for U{utterance_id}:'

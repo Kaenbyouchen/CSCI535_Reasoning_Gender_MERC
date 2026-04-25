@@ -1,0 +1,234 @@
+{
+  "model": "Qwen/Qwen2.5-Omni-7B",
+  "model_alias": "qwen25_omni7b",
+  "dataset": "IEMOCAP",
+  "modalities": [
+    "audio"
+  ],
+  "frame_sample_fps": 1.0,
+  "speaker_mode": "anon",
+  "labels": [
+    "Neutral",
+    "Anger",
+    "Frustration",
+    "Happiness",
+    "Excited",
+    "Sadness",
+    "Fear",
+    "Disgust",
+    "Surprise"
+  ],
+  "skipped_failed": 4713,
+  "overall": {
+    "overall_accuracy": 0.3210227272727273,
+    "weighted_f1": 0.2618532610143503,
+    "per_emotion": {
+      "Neutral": {
+        "precision": 0.28465487735310896,
+        "recall": 0.6514360313315927,
+        "f1": 0.3961889638745534,
+        "accuracy": 0.4598721590909091,
+        "support": 766
+      },
+      "Anger": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.8924005681818182,
+        "support": 301
+      },
+      "Frustration": {
+        "precision": 0.3902439024390244,
+        "recall": 0.30498533724340177,
+        "f1": 0.3423868312757201,
+        "accuracy": 0.7162642045454546,
+        "support": 682
+      },
+      "Happiness": {
+        "precision": 0.2236180904522613,
+        "recall": 0.42995169082125606,
+        "f1": 0.29421487603305785,
+        "accuracy": 0.8483664772727273,
+        "support": 207
+      },
+      "Excited": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.7997159090909091,
+        "support": 564
+      },
+      "Sadness": {
+        "precision": 0.8307692307692308,
+        "recall": 0.45569620253164556,
+        "f1": 0.5885558583106267,
+        "accuracy": 0.9463778409090909,
+        "support": 237
+      },
+      "Fear": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.9904119318181818,
+        "support": 27
+      },
+      "Disgust": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      },
+      "Surprise": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.9886363636363636,
+        "support": 32
+      }
+    },
+    "total_samples": 2816
+  },
+  "by_gender": {
+    "male": {
+      "overall_accuracy": 0.34309623430962344,
+      "weighted_f1": 0.2786991429505975,
+      "per_emotion": {
+        "Neutral": {
+          "precision": 0.3079470198675497,
+          "recall": 0.6888888888888889,
+          "f1": 0.425629290617849,
+          "accuracy": 0.47489539748953974,
+          "support": 405
+        },
+        "Anger": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.907252440725244,
+          "support": 133
+        },
+        "Frustration": {
+          "precision": 0.45925925925925926,
+          "recall": 0.31155778894472363,
+          "f1": 0.37125748502994016,
+          "accuracy": 0.7071129707112971,
+          "support": 398
+        },
+        "Happiness": {
+          "precision": 0.24102564102564103,
+          "recall": 0.5802469135802469,
+          "f1": 0.3405797101449275,
+          "accuracy": 0.8730822873082287,
+          "support": 81
+        },
+        "Excited": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.797071129707113,
+          "support": 291
+        },
+        "Sadness": {
+          "precision": 0.6666666666666666,
+          "recall": 0.4117647058823529,
+          "f1": 0.509090909090909,
+          "accuracy": 0.9435146443514645,
+          "support": 102
+        },
+        "Fear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.9923291492329149,
+          "support": 11
+        },
+        "Disgust": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Surprise": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.9909344490934449,
+          "support": 13
+        }
+      },
+      "total_samples": 1434
+    },
+    "female": {
+      "overall_accuracy": 0.2981186685962373,
+      "weighted_f1": 0.24537117486380883,
+      "per_emotion": {
+        "Neutral": {
+          "precision": 0.2597402597402597,
+          "recall": 0.6094182825484764,
+          "f1": 0.36423841059602646,
+          "accuracy": 0.4442836468885673,
+          "support": 361
+        },
+        "Anger": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.8769898697539797,
+          "support": 168
+        },
+        "Frustration": {
+          "precision": 0.3193916349809886,
+          "recall": 0.29577464788732394,
+          "f1": 0.3071297989031079,
+          "accuracy": 0.7257597684515196,
+          "support": 284
+        },
+        "Happiness": {
+          "precision": 0.20689655172413793,
+          "recall": 0.3333333333333333,
+          "f1": 0.2553191489361702,
+          "accuracy": 0.8227206946454414,
+          "support": 126
+        },
+        "Excited": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.8024602026049205,
+          "support": 273
+        },
+        "Sadness": {
+          "precision": 0.9850746268656716,
+          "recall": 0.4888888888888889,
+          "f1": 0.6534653465346534,
+          "accuracy": 0.9493487698986975,
+          "support": 135
+        },
+        "Fear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.9884225759768451,
+          "support": 16
+        },
+        "Disgust": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Surprise": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.9862518089725036,
+          "support": 19
+        }
+      },
+      "total_samples": 1382
+    }
+  }
+}

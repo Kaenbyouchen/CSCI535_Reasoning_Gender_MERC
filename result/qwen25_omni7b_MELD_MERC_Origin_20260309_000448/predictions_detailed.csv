@@ -1,0 +1,58 @@
+index,speaker,speaker_label,gender,dialogue_id,utterance_id,utterance,context_history_count,gold_emotion,pred_emotion,is_correct,raw_model_output
+185,Joey,P1,male,19,0,Really? A purse?,0,Surprise,Sadness,0,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Sadness""}]}"
+247,Joey,P1,male,26,0,Hey I got one! I got one!,0,Joy,Neutral,0,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+286,Rachel,P1,female,31,0,"Whoops.  Oh, hey, do you need help with that?",0,Neutral,Neutral,1,"```json
+{
+    ""predictions"": [
+        {
+            ""utterance_id"": ""U0"",
+            ""emotion"": ""Neutral""
+        }
+    ]
+}
+```"
+734,Monica,P1,female,82,0,How ya feelin’?,0,Neutral,Anger,0,"```json
+{
+  ""predictions"": [
+    {
+      ""utterance_id"": ""U0"",
+      ""emotion"": ""Anger""
+    }
+  ]
+}
+```"
+788,Joey,P1,male,91,0,"Hey Ross, will you pass me that knife?",0,Neutral,Anger,0,"```json
+{
+  ""predictions"": [
+    {
+      ""utterance_id"": ""U0"",
+      ""emotion"": ""Anger""
+    }
+  ]
+}
+```"
+1277,Rachel,P1,female,136,0,Oh my God! That is so good!,0,Joy,Joy,1,"```json
+{
+  ""predictions"": [
+    {
+      ""utterance_id"": ""0"",
+      ""emotion"": ""Joy""
+    }
+  ]
+}
+```"
+1386,Janice,P1,female,148,0,I’m sorry.,0,Sadness,Neutral,0,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+2195,Monica,P1,female,235,0,"OK, try this salmon mousse.",0,Neutral,Neutral,1,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+2196,Joey,P1,male,236,0,Mmmm. Good.,0,Joy,Neutral,0,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+2318,Rachel,P1,female,248,0,Op.,0,Neutral,Neutral,1,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+2576,Chandler,P1,male,276,0,Hey.,0,Neutral,Neutral,1,"{""predictions"":[{""utterance_id"":""U0"",""emotion"":""Neutral""}]}"
+2577,Monica,P1,female,277,0,What’s the matter?,0,Sadness,Sadness,1,"```json
+{
+  ""predictions"": [
+    {
+      ""utterance_id"": ""0"",
+      ""emotion"": ""Sadness""
+    }
+  ]
+}
+```"

@@ -1,0 +1,191 @@
+{
+  "model": "Qwen/Qwen2.5-Omni-7B",
+  "model_alias": "qwen25_omni7b",
+  "dataset": "IEMOCAP",
+  "modalities": [
+    "text",
+    "audio"
+  ],
+  "frame_sample_fps": 1.0,
+  "speaker_mode": "none",
+  "labels": [
+    "Neutral",
+    "Anger",
+    "Frustration",
+    "Happiness",
+    "Excited",
+    "Sadness",
+    "Fear"
+  ],
+  "skipped_failed": 0,
+  "overall": {
+    "overall_accuracy": 0.42892156862745096,
+    "weighted_f1": 0.4031547530057274,
+    "per_emotion": {
+      "Neutral": {
+        "precision": 0.4022503516174402,
+        "recall": 0.7447916666666666,
+        "f1": 0.5223744292237443,
+        "accuracy": 0.6795343137254902,
+        "support": 384
+      },
+      "Anger": {
+        "precision": 0.3473684210526316,
+        "recall": 0.5823529411764706,
+        "f1": 0.4351648351648352,
+        "accuracy": 0.8425245098039216,
+        "support": 170
+      },
+      "Frustration": {
+        "precision": 0.5443786982248521,
+        "recall": 0.24146981627296588,
+        "f1": 0.33454545454545453,
+        "accuracy": 0.7757352941176471,
+        "support": 381
+      },
+      "Happiness": {
+        "precision": 0.3081081081081081,
+        "recall": 0.3986013986013986,
+        "f1": 0.34756097560975613,
+        "accuracy": 0.8688725490196079,
+        "support": 143
+      },
+      "Excited": {
+        "precision": 0.7966101694915254,
+        "recall": 0.15719063545150502,
+        "f1": 0.26256983240223464,
+        "accuracy": 0.8382352941176471,
+        "support": 299
+      },
+      "Sadness": {
+        "precision": 0.5592417061611374,
+        "recall": 0.4816326530612245,
+        "f1": 0.5175438596491229,
+        "accuracy": 0.8651960784313726,
+        "support": 245
+      },
+      "Fear": {
+        "precision": 0.08333333333333333,
+        "recall": 0.1,
+        "f1": 0.0909090909090909,
+        "accuracy": 0.9877450980392157,
+        "support": 10
+      }
+    },
+    "total_samples": 1632
+  },
+  "by_gender": {
+    "male": {
+      "overall_accuracy": 0.3699885452462772,
+      "weighted_f1": 0.336837200951698,
+      "per_emotion": {
+        "Neutral": {
+          "precision": 0.33066666666666666,
+          "recall": 0.7607361963190185,
+          "f1": 0.46096654275092935,
+          "accuracy": 0.6678121420389461,
+          "support": 163
+        },
+        "Anger": {
+          "precision": 0.33544303797468356,
+          "recall": 0.5760869565217391,
+          "f1": 0.42400000000000004,
+          "accuracy": 0.8350515463917526,
+          "support": 92
+        },
+        "Frustration": {
+          "precision": 0.4931506849315068,
+          "recall": 0.16363636363636364,
+          "f1": 0.24573378839590446,
+          "accuracy": 0.7468499427262314,
+          "support": 220
+        },
+        "Happiness": {
+          "precision": 0.2231404958677686,
+          "recall": 0.4090909090909091,
+          "f1": 0.2887700534759359,
+          "accuracy": 0.847651775486827,
+          "support": 66
+        },
+        "Excited": {
+          "precision": 0.8611111111111112,
+          "recall": 0.14285714285714285,
+          "f1": 0.24505928853754944,
+          "accuracy": 0.7812142038946163,
+          "support": 217
+        },
+        "Sadness": {
+          "precision": 0.49038461538461536,
+          "recall": 0.45132743362831856,
+          "f1": 0.4700460829493087,
+          "accuracy": 0.868270332187858,
+          "support": 113
+        },
+        "Fear": {
+          "precision": 0.16666666666666666,
+          "recall": 0.5,
+          "f1": 0.25,
+          "accuracy": 0.993127147766323,
+          "support": 2
+        }
+      },
+      "total_samples": 873
+    },
+    "female": {
+      "overall_accuracy": 0.49670619235836627,
+      "weighted_f1": 0.48153631924827517,
+      "per_emotion": {
+        "Neutral": {
+          "precision": 0.48214285714285715,
+          "recall": 0.7330316742081447,
+          "f1": 0.5816876122082585,
+          "accuracy": 0.6930171277997365,
+          "support": 221
+        },
+        "Anger": {
+          "precision": 0.36220472440944884,
+          "recall": 0.5897435897435898,
+          "f1": 0.44878048780487806,
+          "accuracy": 0.8511198945981555,
+          "support": 78
+        },
+        "Frustration": {
+          "precision": 0.5833333333333334,
+          "recall": 0.34782608695652173,
+          "f1": 0.4357976653696498,
+          "accuracy": 0.8089591567852438,
+          "support": 161
+        },
+        "Happiness": {
+          "precision": 0.46875,
+          "recall": 0.38961038961038963,
+          "f1": 0.425531914893617,
+          "accuracy": 0.8932806324110671,
+          "support": 77
+        },
+        "Excited": {
+          "precision": 0.6956521739130435,
+          "recall": 0.1951219512195122,
+          "f1": 0.3047619047619048,
+          "accuracy": 0.9038208168642952,
+          "support": 82
+        },
+        "Sadness": {
+          "precision": 0.6261682242990654,
+          "recall": 0.5075757575757576,
+          "f1": 0.5606694560669456,
+          "accuracy": 0.8616600790513834,
+          "support": 132
+        },
+        "Fear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.9815546772068511,
+          "support": 8
+        }
+      },
+      "total_samples": 759
+    }
+  }
+}

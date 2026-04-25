@@ -1,0 +1,107 @@
+{
+  "model": "Qwen/Qwen2.5-Omni-7B",
+  "model_alias": "qwen25_omni7b",
+  "dataset": "IEMOCAP",
+  "modalities": [
+    "text",
+    "audio"
+  ],
+  "frame_sample_fps": 1.0,
+  "speaker_mode": "anon",
+  "labels": [
+    "Neutral",
+    "Anger",
+    "Frustration",
+    "Happiness",
+    "Excited",
+    "Sadness",
+    "Fear",
+    "Disgust",
+    "Surprise"
+  ],
+  "skipped_failed": 7529,
+  "overall": {
+    "overall_accuracy": 0.0,
+    "weighted_f1": 0.0,
+    "per_emotion": {
+      "Neutral": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Anger": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Frustration": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Happiness": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Excited": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Sadness": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Fear": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Disgust": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Surprise": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      }
+    },
+    "total_samples": 0
+  },
+  "by_gender": {
+    "male": {
+      "overall_accuracy": 0.0,
+      "weighted_f1": 0.0,
+      "per_emotion": {},
+      "total_samples": 0
+    },
+    "female": {
+      "overall_accuracy": 0.0,
+      "weighted_f1": 0.0,
+      "per_emotion": {},
+      "total_samples": 0
+    }
+  }
+}

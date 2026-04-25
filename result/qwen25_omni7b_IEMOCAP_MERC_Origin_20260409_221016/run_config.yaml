@@ -1,0 +1,81 @@
+model:
+  type: qwen
+  alias: qwen25_omni7b
+  hf_model_name: Qwen/Qwen2.5-Omni-7B
+  hf_token_env: HF_TOKEN
+  torch_dtype: bf16
+  device_map: auto
+  attn_implementation: flash_attention_2
+  low_cpu_mem_usage: true
+  cache_dir: null
+  temperature: 0.0
+  max_output_tokens: 1024
+  max_retries: 2
+  retry_sleep_seconds: 2
+  use_audio_in_video: false
+  disable_talker: true
+  return_audio: false
+dataset:
+  name: IEMOCAP
+  data_dir: data/IEMOCAP_full_release
+  filter_other: true
+task:
+  name: MERC
+  labels:
+  - Neutral
+  - Anger
+  - Frustration
+  - Happiness
+  - Excited
+  - Sadness
+  - Fear
+  - Disgust
+  - Surprise
+paths:
+  result_dir: result
+eval:
+  modalities:
+  - text
+  - audio
+  - video
+  frame_sample_fps: 1.0
+  speaker_mode: anon
+  log_every_n: 5
+  max_samples: null
+  sample_retries: 2
+  sample_timeout_seconds: 600
+  stall_log_seconds: 180
+prompt:
+  dialogue:
+    system: 'You are an expert evaluator for Multimodal Emotion Recognition in Conversation
+      (MERC).
+
+      Given a full dialogue with multiple utterances, predict one emotion label for
+      EACH utterance.
+
+      Valid labels: Neutral, Anger, Frustration, Happiness, Excited, Sadness, Fear,
+      Disgust, Surprise.
+
+      Output strictly JSON only with schema:
+
+      {"predictions":[{"utterance_id":"<id>","emotion":"<one label>"}]}
+
+      '
+    user_template: 'Dialogue_ID: {dialogue_id}
+
+      Utterance count: {utterance_count}
+
+      Dialogue utterances in chronological order:
+
+      {dialogue_block}
+
+      Note: each line is formatted as [Uid] Speaker=<label>: <text>.
+
+
+      Return strictly JSON with schema:
+
+      {"predictions":[{"utterance_id":"<id>","emotion":"<one of the nine labels>"}]}
+
+      '
+    audio_prefix_template: 'Dialogue audio:'
+    video_prefix_template: 'Dialogue video frames:'

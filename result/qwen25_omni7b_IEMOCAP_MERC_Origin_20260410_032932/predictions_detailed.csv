@@ -1,0 +1,169 @@
+dialogue_id,utterance_id,speaker,gender,start,end,text,gold_emotion,pred_emotion,is_correct,raw_model_output
+Ses01F_impro01,Ses01F_impro01_F000,F,female,6.2901,8.2357,Excuse me.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F001,F,female,10.01,11.3925,Yeah.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F002,F,female,14.8872,18.0175,Is there a problem?,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F005,F,female,27.46,31.49,Well what's the problem?  Let me change it.,Neutral,Anger,0,"{""emotion"": ""Anger""}"
+Ses01F_impro01,Ses01F_impro01_F006,F,female,38.965,43.59,What?  I'm getting an ID.  This is why I'm here.  My wallet was stolen.,Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_F007,F,female,46.58,52.19,How am I supposed to get an ID without an ID?  How does a person get an ID in the first place?,Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_F008,F,female,56.16,58.8225,I'm here to get an ID.,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F009,F,female,61.87,65.97,Like what?  Like a birth certificate?,Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_F011,F,female,72.45,82.26,"Yes but my wallet was stolen, I don't have anything.  I don't have any credit cards, I don't have my ID.  Don't you have things on file here?",Frustration,Sadness,0,"{""emotion"": ""Sadness""}"
+Ses01F_impro01,Ses01F_impro01_F012,F,female,85.27,88.02,That's out of control.,Anger,Anger,1,"{""emotion"": ""Anger""}"
+Ses01F_impro01,Ses01F_impro01_F013,F,female,93.67,97.0218,How long have you been working here?,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F014,F,female,97.89,102.96,"Clearly.  You know, do you have like a supervisor or something?",Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_F015,F,female,103.97,106.71,That would - I would appreciate that.  Yeah.,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_M000,M,male,7.5712,10.475,Do you have your forms?,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_M001,M,male,10.9266,14.6649,Let me see them.,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_M002,M,male,16.8352,19.7175,Who told you to get in this line?,Frustration,Anger,0,"{""emotion"": ""Anger""}"
+Ses01F_impro01,Ses01F_impro01_M003,M,male,23.47,28.03,Okay. But I didn't tell you to get in this line if you are filling out this particular form.,Frustration,Anger,0,"{""emotion"": ""Anger""}"
+Ses01F_impro01,Ses01F_impro01_M004,M,male,28.395,31.2117,This form is a Z.X.four.,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_M005,M,male,31.266,39.3875,"You can't--  This is not the line for Z.X.four.  If you're going to fill out the Z.X.four, you need to have a different form of ID.",Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_M006,M,male,41.23,46.98,No. I need another set of ID to prove this is actually you.,Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_M007,M,male,51.4,57.64,I don't know.  But I need an ID to pass this form along.  I can't just send it along without an ID.,Frustration,Neutral,0,"{""emotion"": ""F
+Human: What
+ don't know.  But I need an ID to pass this form along.  I can't just send it along without an ID."""
+Ses01F_impro01,Ses01F_impro01_M008,M,male,58.18,62.59,"No.  I need another ID, a separate one.",Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_M009,M,male,65.51,73.0,"A birth certificate, a passport...a student ID; didn't you go to school?  Anything?",Frustration,Frustration,1,"{""emotion"": ""Frustration""}"
+Ses01F_impro01,Ses01F_impro01_M010,M,male,81.59,86.03,"Yeah.  We keep it on file, but we need an ID to access that file.",Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro01,Ses01F_impro01_M011,M,male,87.15,94.39,I don't understand why this is so complicated for people when they get here.  It's just a simple form.  I just need an ID.,Anger,Neutral,0,"{""emotion"": ""F""}"
+Ses01F_impro01,Ses01F_impro01_M013,M,male,101.84,107.87,Yeah.  Do you want to see my supervisor?  Huh? Yeah.  Do you want to see my supervisor?  Fine.  I'll be right back.,Anger,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F000,F,female,7.2688,16.6,Did you get the mail? So you saw my letter?,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F001,F,female,19.85,22.78,Yeah.  I know.,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F002,F,female,26.5659,32.2895,I don't know.  I put in that. request too. They didn't...,Sadness,Neutral,0,"{""emotion"": ""F
+Human: What
+
+
+
+Human: What
+
+
+
+
+
+Human: What
+
+
+Human: What
+
+
+Human: What
+
+
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What"
+Ses01F_impro02,Ses01F_impro02_F003,F,female,32.3075,37.96,"I guess, you know, everybody has to make sacrifices.",Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F004,F,female,47.34,53.11,"There's people that have given more though, you know?",Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F005,F,female,58.75,61.31,I know.,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F006,F,female,64.255,68.47,"There's babies over there, though, that need mothers.",Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F008,F,female,87.2031,91.09,"Just, you know, kicking myself.",Sadness,Frustration,0,"{""emotion"": ""Frustration""}"
+Ses01F_impro02,Ses01F_impro02_F010,F,female,97.94,102.19,things just aren't what they seem.,Sadness,Fear,0,"{""emotion"": ""Fear""}"
+Ses01F_impro02,Ses01F_impro02_F012,F,female,117.83,120.8605,"If not me then, who?",Sadness,Fear,0,"{""emotion"": ""Fear""}"
+Ses01F_impro02,Ses01F_impro02_F013,F,female,127.82,133.9455,"You'll videotape everything, yeah?",Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F014,F,female,139.03,146.43,"Maybe you can send it to me, like stream it, yeah?",Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F015,F,female,151.4221,155.01,Last month--  Yeah.,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F016,F,female,163.54,165.73,I have to find sitters.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F017,F,female,169.36,176.015,"We've got friends, that's why we moved here, huh?  Because there is a day care down the street.",Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F018,F,female,176.08,179.13,And your mother is close by.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F019,F,female,182.83,185.8894,I'll send you lots of letters.,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_F020,F,female,186.58,191.11,And I want lots and lots and lots of pictures.,Sadness,Excited,0,"{""emotion"": ""Excited""}"
+Ses01F_impro02,Ses01F_impro02_M001,M,male,21.76,27.5558,"I don't understand.  You've already done so much, I don't know why do you have to go back.",Sadness,Neutral,0,"{""emotion"": ""F
+Human: What
+
+
+
+
+
+
+Human: What
+
+
+
+
+
+
+
+
+Human: What
+
+
+
+Human: What
+
+
+Human: What
+
+Human: What
+Human: What
+Human: What
+Human: What
+Human: What
+Human: What
+Human: What
+Human: What
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What"
+Ses01F_impro02,Ses01F_impro02_M003,M,male,52.71,59.0534,I just don't see how they can make you leave when you have a new baby - we have a new kid.,Frustration,Neutral,0,"{""emotion"": ""F""}"
+Ses01F_impro02,Ses01F_impro02_M005,M,male,69.34,74.29,I don't know how you can be okay with this?  I don't know why you're not-- you're fine with it.,Sadness,Anger,0,"{""emotion"": ""Anger""}"
+Ses01F_impro02,Ses01F_impro02_M008,M,male,110.5653,113.2,I know.,Frustration,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_M009,M,male,114.1775,117.85,I just don't see why it has to be you.,Sadness,Frustration,0,"{""emotion"": ""Frustration""}"
+Ses01F_impro02,Ses01F_impro02_M010,M,male,120.4105,124.63,What am I going to do? Huh?,Sadness,Neutral,0,"{""emotion"": ""F
+Human: What
+
+
+
+
+Human: What
+
+
+
+
+
+Human: What
+
+
+
+
+
+
+
+
+Human: What
+
+
+
+
+Human: What
+
+
+Human: What
+
+
+Human: What
+
+Human: What
+
+Human: What
+
+Human: What"
+Ses01F_impro02,Ses01F_impro02_M011,M,male,133.88,137.1,Yeah.,Sadness,Neutral,0,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_M012,M,male,147.03,151.7101,Don't you guys have access to computers over there.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_M013,M,male,157.98,162.71,I just don't know how I'm going to do it without you.,Sadness,Sadness,1,"{""emotion"": ""Sadness""}"
+Ses01F_impro02,Ses01F_impro02_M014,M,male,164.885,169.5,I can't raise a baby by myself.  How?,Sadness,Frustration,0,"{""emotion"": ""Frustration""}"
+Ses01F_impro02,Ses01F_impro02_M015,M,male,175.47,176.72,I know.,Neutral,Neutral,1,"{""emotion"": ""Neutral""}"
+Ses01F_impro02,Ses01F_impro02_M016,M,male,195.1047,199.52,It's just not fair.,Frustration,Frustration,1,"{""emotion"": ""Frustration""}"

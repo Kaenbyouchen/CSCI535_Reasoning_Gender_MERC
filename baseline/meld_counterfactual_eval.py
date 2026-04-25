@@ -520,9 +520,17 @@ def main():
     audio_prefix = prompt_cfg.get("audio_prefix_template", "Audio of TARGET utterance:")
     video_prefix = prompt_cfg.get("video_prefix_template", "Video of TARGET utterance:")
 
-    # Video sampling config — caps long-clip token count to avoid OOM on A40.
+    # Video sampling — must satisfy qwen-omni-utils VIDEO_MIN_PIXELS (128*28*28).
+    # Smaller max_pixels causes smart_resize to raise and all video samples fail.
+    _vmin = 128 * 28 * 28
     video_fps = float(cfg.get("eval", {}).get("video_fps", 1.0))
-    video_max_pixels = int(cfg.get("eval", {}).get("video_max_pixels", 224 * 224))
+    video_max_pixels = int(cfg.get("eval", {}).get("video_max_pixels", _vmin))
+    if video_max_pixels < _vmin:
+        print(f"[WARN] video_max_pixels={video_max_pixels} < {_vmin} (qwen VIDEO_MIN_PIXELS); "
+              f"clamping to {_vmin}.")
+        video_max_pixels = _vmin
+    video_max_frames = cfg.get("eval", {}).get("video_max_frames")
+    video_max_frames = (int(video_max_frames) if video_max_frames is not None else None)
 
     # ── Load Qwen ─────────────────────────────────────────────────────────
     import torch
@@ -628,11 +636,14 @@ def main():
                 skipped_video_missing += 1
             else:
                 user_content.append({"type": "text", "text": video_prefix})
-                user_content.append({
+                vitem = {
                     "type": "video", "video": str(clip),
                     "fps": video_fps,
                     "max_pixels": video_max_pixels,
-                })
+                }
+                if video_max_frames is not None:
+                    vitem["max_frames"] = video_max_frames
+                user_content.append(vitem)
 
         if include_audio:
             wav_path = None

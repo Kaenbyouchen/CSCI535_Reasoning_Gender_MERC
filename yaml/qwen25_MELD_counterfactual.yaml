@@ -44,9 +44,12 @@ eval:
   audio_source: original
   save_logits: true
   # Video sampling caps to avoid OOM on long clips (some MELD utterances ~13s).
-  # 1 fps × 224x224 frames keeps vision-token count tractable on A40.
+  # qwen-omni-utils enforces VIDEO_MIN_PIXELS = 128*28*28 = 100352 per frame;
+  # setting max_pixels below that breaks smart_resize and every video sample fails.
   video_fps: 1.0
-  video_max_pixels: 50176  # 224 * 224
+  video_max_pixels: 100352
+  # Hard cap on extracted frames (even number; library FRAME_FACTOR=2).
+  video_max_frames: 16
 
 prompt:
   utterance:

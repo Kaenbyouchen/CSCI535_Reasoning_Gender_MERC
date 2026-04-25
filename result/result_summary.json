@@ -194,5 +194,119 @@
     "overall_accuracy": 0.5602968460111317,
     "overall_weighted_f1": 0.577561912939189,
     "timestamp": "2026-04-25T02:47:07"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260425_034441",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 3,
+    "overall_accuracy": 0.6666666666666666,
+    "overall_weighted_f1": 0.5333333333333333,
+    "timestamp": "2026-04-25T03:45:06"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260425_034931",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 3,
+    "overall_accuracy": 0.6666666666666666,
+    "overall_weighted_f1": 0.5333333333333333,
+    "timestamp": "2026-04-25T03:49:56"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260425_035511",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 3,
+    "overall_accuracy": 0.0,
+    "overall_weighted_f1": 0.0,
+    "timestamp": "2026-04-25T03:55:33"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260425_035607",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.4874768089053803,
+    "overall_weighted_f1": 0.4985477814610536,
+    "timestamp": "2026-04-25T04:26:58"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_BL_text+audio+video_20260425_042700",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "original",
+    "modalities": [
+      "text",
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.576530612244898,
+    "overall_weighted_f1": 0.5839378392226773,
+    "timestamp": "2026-04-25T04:57:58"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_CF_audio+video_20260425_045800",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "counterfactual",
+    "modalities": [
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.39007421150278293,
+    "overall_weighted_f1": 0.4144308282239867,
+    "timestamp": "2026-04-25T05:30:27"
+  },
+  {
+    "run_dir": "result/qwen25_omni7b_cf_MELD_CF_CF_text+audio+video_20260425_053029",
+    "model": "Qwen/Qwen2.5-Omni-7B",
+    "model_alias": "qwen25_omni7b_cf",
+    "dataset": "MELD",
+    "task": "MERC_CF",
+    "audio_source": "counterfactual",
+    "modalities": [
+      "text",
+      "audio",
+      "video"
+    ],
+    "n_samples_evaluated": 2156,
+    "overall_accuracy": 0.5589053803339518,
+    "overall_weighted_f1": 0.5714386746937128,
+    "timestamp": "2026-04-25T06:01:08"
   }
 ]

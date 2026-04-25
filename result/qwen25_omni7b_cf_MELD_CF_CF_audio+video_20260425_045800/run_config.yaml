@@ -41,6 +41,9 @@ eval:
   sample_timeout_seconds: 600
   context_window_max: 0
   inference_unit: utterance
-  audio_source: original
+  audio_source: counterfactual
   save_logits: true
+  video_fps: 1.0
+  video_max_pixels: 100352
+  video_max_frames: 16
   n_samples_filtered: 2156

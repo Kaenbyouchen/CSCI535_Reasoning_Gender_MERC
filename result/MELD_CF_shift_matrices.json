@@ -1,0 +1,274 @@
+{
+  "audio": {
+    "row=BL_pred, col=CF_pred": {
+      "Anger": {
+        "Anger": 261,
+        "Disgust": 47,
+        "Sadness": 16,
+        "Joy": 11,
+        "Neutral": 21,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Disgust": {
+        "Anger": 44,
+        "Disgust": 113,
+        "Sadness": 10,
+        "Joy": 6,
+        "Neutral": 10,
+        "Surprise": 2,
+        "Fear": 1
+      },
+      "Sadness": {
+        "Anger": 26,
+        "Disgust": 25,
+        "Sadness": 132,
+        "Joy": 2,
+        "Neutral": 26,
+        "Surprise": 1,
+        "Fear": 0
+      },
+      "Joy": {
+        "Anger": 28,
+        "Disgust": 19,
+        "Sadness": 9,
+        "Joy": 127,
+        "Neutral": 19,
+        "Surprise": 11,
+        "Fear": 0
+      },
+      "Neutral": {
+        "Anger": 119,
+        "Disgust": 132,
+        "Sadness": 68,
+        "Joy": 53,
+        "Neutral": 560,
+        "Surprise": 22,
+        "Fear": 6
+      },
+      "Surprise": {
+        "Anger": 54,
+        "Disgust": 22,
+        "Sadness": 14,
+        "Joy": 8,
+        "Neutral": 21,
+        "Surprise": 80,
+        "Fear": 2
+      },
+      "Fear": {
+        "Anger": 3,
+        "Disgust": 4,
+        "Sadness": 0,
+        "Joy": 0,
+        "Neutral": 4,
+        "Surprise": 0,
+        "Fear": 13
+      }
+    },
+    "n_paired_samples": 2156
+  },
+  "text+audio": {
+    "row=BL_pred, col=CF_pred": {
+      "Anger": {
+        "Anger": 259,
+        "Disgust": 16,
+        "Sadness": 2,
+        "Joy": 4,
+        "Neutral": 11,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Disgust": {
+        "Anger": 20,
+        "Disgust": 150,
+        "Sadness": 3,
+        "Joy": 0,
+        "Neutral": 1,
+        "Surprise": 1,
+        "Fear": 0
+      },
+      "Sadness": {
+        "Anger": 4,
+        "Disgust": 11,
+        "Sadness": 140,
+        "Joy": 0,
+        "Neutral": 5,
+        "Surprise": 1,
+        "Fear": 2
+      },
+      "Joy": {
+        "Anger": 7,
+        "Disgust": 0,
+        "Sadness": 1,
+        "Joy": 213,
+        "Neutral": 15,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Neutral": {
+        "Anger": 55,
+        "Disgust": 53,
+        "Sadness": 22,
+        "Joy": 38,
+        "Neutral": 846,
+        "Surprise": 26,
+        "Fear": 6
+      },
+      "Surprise": {
+        "Anger": 18,
+        "Disgust": 10,
+        "Sadness": 2,
+        "Joy": 5,
+        "Neutral": 5,
+        "Surprise": 171,
+        "Fear": 0
+      },
+      "Fear": {
+        "Anger": 3,
+        "Disgust": 1,
+        "Sadness": 0,
+        "Joy": 0,
+        "Neutral": 1,
+        "Surprise": 0,
+        "Fear": 20
+      }
+    },
+    "n_paired_samples": 2156
+  },
+  "audio+video": {
+    "row=BL_pred, col=CF_pred": {
+      "Anger": {
+        "Anger": 317,
+        "Disgust": 42,
+        "Sadness": 36,
+        "Joy": 9,
+        "Neutral": 15,
+        "Surprise": 2,
+        "Fear": 1
+      },
+      "Disgust": {
+        "Anger": 25,
+        "Disgust": 107,
+        "Sadness": 12,
+        "Joy": 4,
+        "Neutral": 8,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Sadness": {
+        "Anger": 27,
+        "Disgust": 25,
+        "Sadness": 232,
+        "Joy": 6,
+        "Neutral": 19,
+        "Surprise": 3,
+        "Fear": 0
+      },
+      "Joy": {
+        "Anger": 25,
+        "Disgust": 18,
+        "Sadness": 11,
+        "Joy": 202,
+        "Neutral": 21,
+        "Surprise": 9,
+        "Fear": 0
+      },
+      "Neutral": {
+        "Anger": 102,
+        "Disgust": 72,
+        "Sadness": 87,
+        "Joy": 39,
+        "Neutral": 511,
+        "Surprise": 12,
+        "Fear": 3
+      },
+      "Surprise": {
+        "Anger": 28,
+        "Disgust": 11,
+        "Sadness": 9,
+        "Joy": 7,
+        "Neutral": 15,
+        "Surprise": 64,
+        "Fear": 0
+      },
+      "Fear": {
+        "Anger": 4,
+        "Disgust": 2,
+        "Sadness": 2,
+        "Joy": 0,
+        "Neutral": 2,
+        "Surprise": 0,
+        "Fear": 6
+      }
+    },
+    "n_paired_samples": 2156
+  },
+  "text+audio+video": {
+    "row=BL_pred, col=CF_pred": {
+      "Anger": {
+        "Anger": 311,
+        "Disgust": 12,
+        "Sadness": 4,
+        "Joy": 1,
+        "Neutral": 10,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Disgust": {
+        "Anger": 13,
+        "Disgust": 148,
+        "Sadness": 3,
+        "Joy": 0,
+        "Neutral": 7,
+        "Surprise": 3,
+        "Fear": 0
+      },
+      "Sadness": {
+        "Anger": 8,
+        "Disgust": 5,
+        "Sadness": 191,
+        "Joy": 1,
+        "Neutral": 9,
+        "Surprise": 1,
+        "Fear": 0
+      },
+      "Joy": {
+        "Anger": 7,
+        "Disgust": 0,
+        "Sadness": 1,
+        "Joy": 267,
+        "Neutral": 5,
+        "Surprise": 4,
+        "Fear": 0
+      },
+      "Neutral": {
+        "Anger": 33,
+        "Disgust": 25,
+        "Sadness": 15,
+        "Joy": 24,
+        "Neutral": 809,
+        "Surprise": 16,
+        "Fear": 1
+      },
+      "Surprise": {
+        "Anger": 13,
+        "Disgust": 4,
+        "Sadness": 1,
+        "Joy": 3,
+        "Neutral": 6,
+        "Surprise": 175,
+        "Fear": 0
+      },
+      "Fear": {
+        "Anger": 0,
+        "Disgust": 0,
+        "Sadness": 1,
+        "Joy": 0,
+        "Neutral": 1,
+        "Surprise": 0,
+        "Fear": 14
+      }
+    },
+    "n_paired_samples": 2156
+  }
+}

@@ -1,0 +1,9 @@
+modality,condition,n_samples,acc,wF1,acc_male,acc_female,wF1_male,wF1_female,f1_Anger,f1_Disgust,f1_Sadness,f1_Joy,f1_Neutral,f1_Surprise,f1_Fear,flip_rate,flip_rate_male,flip_rate_female,mean_KL_BL_to_CF,run_dir
+audio,BL,2156,0.5162,0.5247,0.515,0.5176,0.5196,0.53,0.4193,0.1992,0.3792,0.4509,0.6612,0.451,0.2,,,,,result/qwen25_omni7b_cf_MELD_CF_BL_audio_20260424_204925
+audio,CF,2156,0.3915,0.4205,0.399,0.3827,0.4277,0.4057,0.3341,0.1358,0.3223,0.3787,0.5366,0.3184,0.0882,0.4035,0.3929,0.4159,0.4979,result/qwen25_omni7b_cf_MELD_CF_CF_audio_20260425_021431
+text+audio,BL,2156,0.5955,0.5991,0.5967,0.5942,0.5979,0.5999,0.4474,0.2833,0.4643,0.5754,0.7216,0.5657,0.2535,,,,,result/qwen25_omni7b_cf_MELD_CF_BL_text+audio_20260424_210555
+text+audio,CF,2156,0.5603,0.5776,0.5735,0.5448,0.5873,0.5625,0.4245,0.2418,0.4373,0.5695,0.6944,0.5438,0.2973,0.1656,0.1402,0.1954,0.1234,result/qwen25_omni7b_cf_MELD_CF_CF_text+audio_20260425_023107
+audio+video,BL,2156,0.4875,0.4985,0.4867,0.4884,0.4953,0.4996,0.4276,0.2311,0.3711,0.4751,0.6088,0.3925,0.1613,,,,,result/qwen25_omni7b_cf_MELD_CF_BL_audio+video_20260425_035607
+audio+video,CF,2156,0.3901,0.4144,0.3783,0.4038,0.4019,0.4243,0.3345,0.1637,0.3096,0.4272,0.5123,0.3072,0.0357,0.3326,0.3414,0.3223,0.2583,result/qwen25_omni7b_cf_MELD_CF_CF_audio+video_20260425_045800
+text+audio+video,BL,2156,0.5765,0.5839,0.5881,0.5629,0.5926,0.573,0.462,0.318,0.4433,0.5539,0.7074,0.5227,0.1613,,,,,result/qwen25_omni7b_cf_MELD_CF_BL_text+audio+video_20260425_042700
+text+audio+video,CF,2156,0.5589,0.5714,0.5572,0.5609,0.5691,0.5732,0.4448,0.2934,0.437,0.5624,0.6822,0.5351,0.1639,0.1118,0.1101,0.1138,0.0505,result/qwen25_omni7b_cf_MELD_CF_CF_text+audio+video_20260425_053029

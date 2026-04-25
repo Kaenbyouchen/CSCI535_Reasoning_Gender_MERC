@@ -520,6 +520,10 @@ def main():
     audio_prefix = prompt_cfg.get("audio_prefix_template", "Audio of TARGET utterance:")
     video_prefix = prompt_cfg.get("video_prefix_template", "Video of TARGET utterance:")
 
+    # Video sampling config — caps long-clip token count to avoid OOM on A40.
+    video_fps = float(cfg.get("eval", {}).get("video_fps", 1.0))
+    video_max_pixels = int(cfg.get("eval", {}).get("video_max_pixels", 224 * 224))
+
     # ── Load Qwen ─────────────────────────────────────────────────────────
     import torch
     from transformers import (Qwen2_5OmniForConditionalGeneration,
@@ -624,7 +628,11 @@ def main():
                 skipped_video_missing += 1
             else:
                 user_content.append({"type": "text", "text": video_prefix})
-                user_content.append({"type": "video", "video": str(clip)})
+                user_content.append({
+                    "type": "video", "video": str(clip),
+                    "fps": video_fps,
+                    "max_pixels": video_max_pixels,
+                })
 
         if include_audio:
             wav_path = None

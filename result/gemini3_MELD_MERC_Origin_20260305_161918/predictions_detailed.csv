@@ -1,0 +1,2 @@
+index,speaker,speaker_label,gender,dialogue_id,utterance_id,utterance,context_history_count,gold_emotion,pred_emotion,is_correct,raw_model_output
+1,Mark,P1,male,0,0,Why do all you’re coffee mugs have numbers on the bottom?,0,Surprise,Neutral,0,"{""predictions"":[{""utterance_id"":""0"",""emotion"":""Neutral""}]}"

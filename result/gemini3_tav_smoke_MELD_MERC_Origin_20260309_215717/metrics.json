@@ -1,0 +1,254 @@
+{
+  "model": "gemini-3.1-flash-lite-preview",
+  "model_alias": "gemini3_tav_smoke",
+  "dataset": "MELD",
+  "task": "MERC",
+  "inference_unit": "utterance",
+  "speaker_mode": "anon",
+  "modalities": [
+    "text",
+    "audio",
+    "video"
+  ],
+  "context_window_max": 3,
+  "frame_sample_fps": 1.0,
+  "effective_modalities": [
+    "text",
+    "audio",
+    "video"
+  ],
+  "audio_input_enabled": true,
+  "audio_disabled_reason": "",
+  "overall": {
+    "overall_accuracy": 0.0,
+    "weighted_f1": 0.0,
+    "per_emotion": {
+      "Anger": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      },
+      "Disgust": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      },
+      "Sadness": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      },
+      "Joy": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      },
+      "Neutral": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 0
+      },
+      "Surprise": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 0.0,
+        "support": 1
+      },
+      "Fear": {
+        "precision": 0.0,
+        "recall": 0.0,
+        "f1": 0.0,
+        "accuracy": 1.0,
+        "support": 0
+      }
+    },
+    "total_samples": 1
+  },
+  "by_gender": {
+    "male": {
+      "overall_accuracy": 0.0,
+      "weighted_f1": 0.0,
+      "per_emotion": {
+        "Anger": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Disgust": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Sadness": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Joy": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        },
+        "Neutral": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.0,
+          "support": 0
+        },
+        "Surprise": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 0.0,
+          "support": 1
+        },
+        "Fear": {
+          "precision": 0.0,
+          "recall": 0.0,
+          "f1": 0.0,
+          "accuracy": 1.0,
+          "support": 0
+        }
+      },
+      "total_samples": 1
+    }
+  },
+  "predicted_emotion_distribution": {
+    "overall": {
+      "total_samples": 1,
+      "emotions": {
+        "Anger": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "0/0",
+          "pred_over_gt_ratio": null
+        },
+        "Disgust": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "0/0",
+          "pred_over_gt_ratio": null
+        },
+        "Sadness": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "0/0",
+          "pred_over_gt_ratio": null
+        },
+        "Joy": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "0/0",
+          "pred_over_gt_ratio": null
+        },
+        "Neutral": {
+          "count": 1,
+          "ratio_percent": 100.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "1/0",
+          "pred_over_gt_ratio": null
+        },
+        "Surprise": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 1,
+          "pred_over_gt_fraction": "0/1",
+          "pred_over_gt_ratio": 0.0
+        },
+        "Fear": {
+          "count": 0,
+          "ratio_percent": 0.0,
+          "gt_count": 0,
+          "pred_over_gt_fraction": "0/0",
+          "pred_over_gt_ratio": null
+        }
+      }
+    },
+    "by_gender": {
+      "male": {
+        "total_samples": 1,
+        "emotions": {
+          "Anger": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "0/0",
+            "pred_over_gt_ratio": null
+          },
+          "Disgust": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "0/0",
+            "pred_over_gt_ratio": null
+          },
+          "Sadness": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "0/0",
+            "pred_over_gt_ratio": null
+          },
+          "Joy": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "0/0",
+            "pred_over_gt_ratio": null
+          },
+          "Neutral": {
+            "count": 1,
+            "ratio_percent": 100.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "1/0",
+            "pred_over_gt_ratio": null
+          },
+          "Surprise": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 1,
+            "pred_over_gt_fraction": "0/1",
+            "pred_over_gt_ratio": 0.0
+          },
+          "Fear": {
+            "count": 0,
+            "ratio_percent": 0.0,
+            "gt_count": 0,
+            "pred_over_gt_fraction": "0/0",
+            "pred_over_gt_ratio": null
+          }
+        }
+      }
+    }
+  },
+  "skipped_no_gender": 0,
+  "skipped_failed_after_retries": 0,
+  "missing_modality_stats": {
+    "video_missing_or_unreadable": 0,
+    "audio_missing_or_unreadable": 0
+  }
+}

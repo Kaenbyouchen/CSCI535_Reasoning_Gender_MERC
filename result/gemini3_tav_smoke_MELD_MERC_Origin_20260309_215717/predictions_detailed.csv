@@ -1,0 +1,18 @@
+index,speaker,speaker_label,gender,dialogue_id,utterance_id,utterance,context_history_count,gold_emotion,pred_emotion,is_correct,resolved_system_prompt,resolved_user_prompt,audio_attached,video_attached,video_frames_count,raw_model_output
+1,Mark,P1,male,0,0,Why do all you’re coffee mugs have numbers on the bottom?,0,Surprise,Neutral,0,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+You must classify the target utterance into exactly one emotion from:
+Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Use all provided modalities if available.
+Output strictly JSON only, with this schema:
+{""emotion"": ""<one of the seven labels>""}
+","Dialogue history (previous utterances from same dialogue):
+None
+
+Target utterance information:
+- Speaker: P1
+- Dialogue_ID: 0
+- Utterance_ID: 0
+- Text: Why do all you’re coffee mugs have numbers on the bottom?
+Please predict the emotion label for this utterance.
+
+",True,1,2,"{""emotion"": ""Neutral""}"

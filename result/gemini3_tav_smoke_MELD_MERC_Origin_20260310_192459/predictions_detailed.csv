@@ -1,0 +1,53 @@
+index,speaker,speaker_label,gender,dialogue_id,utterance_id,utterance,context_history_count,gold_emotion,pred_emotion,is_correct,resolved_system_prompt,resolved_user_prompt,audio_attached,video_attached,video_frames_count,raw_model_output
+1,Mark,P1,male,0,0,Why do all you’re coffee mugs have numbers on the bottom?,0,Surprise,Neutral,0,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+You must classify the target utterance into exactly one emotion from:
+Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Use all provided modalities if available.
+Output strictly JSON only, with this schema:
+{""emotion"": ""<one of the seven labels>""}
+","Dialogue history (previous utterances from same dialogue):
+None
+
+Target utterance information:
+- Speaker: P1
+- Dialogue_ID: 0
+- Utterance_ID: 0
+- Text: Why do all you’re coffee mugs have numbers on the bottom?
+Please predict the emotion label for this utterance.
+
+",True,1,2,"{""emotion"": ""Neutral""}"
+2,Rachel,P2,female,0,1,"Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’",1,Anger,Joy,0,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+You must classify the target utterance into exactly one emotion from:
+Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Use all provided modalities if available.
+Output strictly JSON only, with this schema:
+{""emotion"": ""<one of the seven labels>""}
+","Dialogue history (previous utterances from same dialogue):
+- [U0] Speaker=P1: Why do all you’re coffee mugs have numbers on the bottom?
+
+Target utterance information:
+- Speaker: P2
+- Dialogue_ID: 0
+- Utterance_ID: 1
+- Text: Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’
+Please predict the emotion label for this utterance.
+
+",True,1,7,"{""emotion"": ""Joy""}"
+3,Rachel,P2,female,0,2,Y'know what?,2,Neutral,Neutral,1,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+You must classify the target utterance into exactly one emotion from:
+Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Use all provided modalities if available.
+Output strictly JSON only, with this schema:
+{""emotion"": ""<one of the seven labels>""}
+","Dialogue history (previous utterances from same dialogue):
+- [U0] Speaker=P1: Why do all you’re coffee mugs have numbers on the bottom?
+- [U1] Speaker=P2: Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’
+
+Target utterance information:
+- Speaker: P2
+- Dialogue_ID: 0
+- Utterance_ID: 2
+- Text: Y'know what?
+Please predict the emotion label for this utterance.
+
+",True,1,1,"{""emotion"": ""Neutral""}"

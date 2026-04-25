@@ -1,0 +1,358 @@
+{
+  "model": "gpt-4o-audio-preview",
+  "model_alias": "gpt4o_audio_preview",
+  "dataset": "MELD",
+  "task": "MERC",
+  "inference_unit": "dialogue",
+  "modalities": [
+    "text"
+  ],
+  "context_window_max": 3,
+  "effective_modalities": [
+    "text"
+  ],
+  "audio_input_enabled": false,
+  "audio_disabled_reason": "",
+  "overall": {
+    "overall_accuracy": 0.4136206233166603,
+    "weighted_f1": 0.3877775747523792,
+    "per_emotion": {
+      "Anger": {
+        "precision": 0.2976190476190476,
+        "recall": 0.14534883720930233,
+        "f1": 0.19531250000000003,
+        "accuracy": 0.8414774913428241,
+        "support": 344
+      },
+      "Disgust": {
+        "precision": 0.15789473684210525,
+        "recall": 0.08823529411764706,
+        "f1": 0.11320754716981131,
+        "accuracy": 0.9638322431704501,
+        "support": 68
+      },
+      "Sadness": {
+        "precision": 0.19883040935672514,
+        "recall": 0.16346153846153846,
+        "f1": 0.1794195250659631,
+        "accuracy": 0.8803385917660639,
+        "support": 208
+      },
+      "Joy": {
+        "precision": 0.3062200956937799,
+        "recall": 0.3224181360201511,
+        "f1": 0.3141104294478528,
+        "accuracy": 0.7849172758753367,
+        "support": 397
+      },
+      "Neutral": {
+        "precision": 0.5200254291163382,
+        "recall": 0.653876898481215,
+        "f1": 0.5793201133144475,
+        "accuracy": 0.5429011158137745,
+        "support": 1251
+      },
+      "Surprise": {
+        "precision": 0.18848167539267016,
+        "recall": 0.12811387900355872,
+        "f1": 0.15254237288135594,
+        "accuracy": 0.8460946517891497,
+        "support": 281
+      },
+      "Fear": {
+        "precision": 0.075,
+        "recall": 0.06,
+        "f1": 0.06666666666666665,
+        "accuracy": 0.9676798768757214,
+        "support": 50
+      }
+    },
+    "total_samples": 2599
+  },
+  "by_gender": {
+    "male": {
+      "overall_accuracy": 0.4298507462686567,
+      "weighted_f1": 0.41670796494079876,
+      "per_emotion": {
+        "Anger": {
+          "precision": 0.2318840579710145,
+          "recall": 0.13445378151260504,
+          "f1": 0.1702127659574468,
+          "accuracy": 0.844776119402985,
+          "support": 119
+        },
+        "Disgust": {
+          "precision": 0.16666666666666666,
+          "recall": 0.08695652173913043,
+          "f1": 0.11428571428571427,
+          "accuracy": 0.9691542288557214,
+          "support": 23
+        },
+        "Sadness": {
+          "precision": 0.25,
+          "recall": 0.265625,
+          "f1": 0.25757575757575757,
+          "accuracy": 0.9024875621890547,
+          "support": 64
+        },
+        "Joy": {
+          "precision": 0.25118483412322273,
+          "recall": 0.3925925925925926,
+          "f1": 0.30635838150289013,
+          "accuracy": 0.7611940298507462,
+          "support": 135
+        },
+        "Neutral": {
+          "precision": 0.5724258289703316,
+          "recall": 0.6096654275092936,
+          "f1": 0.5904590459045904,
+          "accuracy": 0.5472636815920398,
+          "support": 538
+        },
+        "Surprise": {
+          "precision": 0.23728813559322035,
+          "recall": 0.13333333333333333,
+          "f1": 0.17073170731707316,
+          "accuracy": 0.8646766169154229,
+          "support": 105
+        },
+        "Fear": {
+          "precision": 0.15384615384615385,
+          "recall": 0.09523809523809523,
+          "f1": 0.11764705882352941,
+          "accuracy": 0.9701492537313433,
+          "support": 21
+        }
+      },
+      "total_samples": 1005
+    },
+    "female": {
+      "overall_accuracy": 0.40338770388958595,
+      "weighted_f1": 0.37013340604272715,
+      "per_emotion": {
+        "Anger": {
+          "precision": 0.3434343434343434,
+          "recall": 0.1511111111111111,
+          "f1": 0.20987654320987656,
+          "accuracy": 0.8393977415307403,
+          "support": 225
+        },
+        "Disgust": {
+          "precision": 0.15384615384615385,
+          "recall": 0.08888888888888889,
+          "f1": 0.11267605633802817,
+          "accuracy": 0.9604767879548306,
+          "support": 45
+        },
+        "Sadness": {
+          "precision": 0.1650485436893204,
+          "recall": 0.11805555555555555,
+          "f1": 0.13765182186234817,
+          "accuracy": 0.8663739021329987,
+          "support": 144
+        },
+        "Joy": {
+          "precision": 0.36231884057971014,
+          "recall": 0.2862595419847328,
+          "f1": 0.31982942430703626,
+          "accuracy": 0.7998745294855709,
+          "support": 262
+        },
+        "Neutral": {
+          "precision": 0.49,
+          "recall": 0.6872370266479664,
+          "f1": 0.5720957384705195,
+          "accuracy": 0.5401505646173149,
+          "support": 713
+        },
+        "Surprise": {
+          "precision": 0.16666666666666666,
+          "recall": 0.125,
+          "f1": 0.14285714285714288,
+          "accuracy": 0.8343789209535759,
+          "support": 176
+        },
+        "Fear": {
+          "precision": 0.037037037037037035,
+          "recall": 0.034482758620689655,
+          "f1": 0.03571428571428571,
+          "accuracy": 0.9661229611041405,
+          "support": 29
+        }
+      },
+      "total_samples": 1594
+    }
+  },
+  "predicted_emotion_distribution": {
+    "overall": {
+      "total_samples": 2599,
+      "emotions": {
+        "Anger": {
+          "count": 168,
+          "ratio_percent": 6.464024624855714,
+          "gt_count": 344,
+          "pred_over_gt_fraction": "168/344",
+          "pred_over_gt_ratio": 0.4883720930232558
+        },
+        "Disgust": {
+          "count": 38,
+          "ratio_percent": 1.4621008080030782,
+          "gt_count": 68,
+          "pred_over_gt_fraction": "38/68",
+          "pred_over_gt_ratio": 0.5588235294117647
+        },
+        "Sadness": {
+          "count": 171,
+          "ratio_percent": 6.579453636013851,
+          "gt_count": 208,
+          "pred_over_gt_fraction": "171/208",
+          "pred_over_gt_ratio": 0.8221153846153846
+        },
+        "Joy": {
+          "count": 418,
+          "ratio_percent": 16.08310888803386,
+          "gt_count": 397,
+          "pred_over_gt_fraction": "418/397",
+          "pred_over_gt_ratio": 1.0528967254408061
+        },
+        "Neutral": {
+          "count": 1573,
+          "ratio_percent": 60.523278183916894,
+          "gt_count": 1251,
+          "pred_over_gt_fraction": "1573/1251",
+          "pred_over_gt_ratio": 1.2573940847322143
+        },
+        "Surprise": {
+          "count": 191,
+          "ratio_percent": 7.348980377068103,
+          "gt_count": 281,
+          "pred_over_gt_fraction": "191/281",
+          "pred_over_gt_ratio": 0.6797153024911032
+        },
+        "Fear": {
+          "count": 40,
+          "ratio_percent": 1.5390534821084998,
+          "gt_count": 50,
+          "pred_over_gt_fraction": "40/50",
+          "pred_over_gt_ratio": 0.8
+        }
+      }
+    },
+    "by_gender": {
+      "male": {
+        "total_samples": 1005,
+        "emotions": {
+          "Anger": {
+            "count": 69,
+            "ratio_percent": 6.865671641791045,
+            "gt_count": 119,
+            "pred_over_gt_fraction": "69/119",
+            "pred_over_gt_ratio": 0.5798319327731093
+          },
+          "Disgust": {
+            "count": 12,
+            "ratio_percent": 1.1940298507462686,
+            "gt_count": 23,
+            "pred_over_gt_fraction": "12/23",
+            "pred_over_gt_ratio": 0.5217391304347826
+          },
+          "Sadness": {
+            "count": 68,
+            "ratio_percent": 6.766169154228856,
+            "gt_count": 64,
+            "pred_over_gt_fraction": "68/64",
+            "pred_over_gt_ratio": 1.0625
+          },
+          "Joy": {
+            "count": 211,
+            "ratio_percent": 20.99502487562189,
+            "gt_count": 135,
+            "pred_over_gt_fraction": "211/135",
+            "pred_over_gt_ratio": 1.5629629629629629
+          },
+          "Neutral": {
+            "count": 573,
+            "ratio_percent": 57.014925373134325,
+            "gt_count": 538,
+            "pred_over_gt_fraction": "573/538",
+            "pred_over_gt_ratio": 1.0650557620817844
+          },
+          "Surprise": {
+            "count": 59,
+            "ratio_percent": 5.870646766169155,
+            "gt_count": 105,
+            "pred_over_gt_fraction": "59/105",
+            "pred_over_gt_ratio": 0.5619047619047619
+          },
+          "Fear": {
+            "count": 13,
+            "ratio_percent": 1.2935323383084665,
+            "gt_count": 21,
+            "pred_over_gt_fraction": "13/21",
+            "pred_over_gt_ratio": 0.6190476190476191
+          }
+        }
+      },
+      "female": {
+        "total_samples": 1594,
+        "emotions": {
+          "Anger": {
+            "count": 99,
+            "ratio_percent": 6.210790464240904,
+            "gt_count": 225,
+            "pred_over_gt_fraction": "99/225",
+            "pred_over_gt_ratio": 0.44
+          },
+          "Disgust": {
+            "count": 26,
+            "ratio_percent": 1.631116687578419,
+            "gt_count": 45,
+            "pred_over_gt_fraction": "26/45",
+            "pred_over_gt_ratio": 0.5777777777777777
+          },
+          "Sadness": {
+            "count": 103,
+            "ratio_percent": 6.461731493099122,
+            "gt_count": 144,
+            "pred_over_gt_fraction": "103/144",
+            "pred_over_gt_ratio": 0.7152777777777778
+          },
+          "Joy": {
+            "count": 207,
+            "ratio_percent": 12.986198243412797,
+            "gt_count": 262,
+            "pred_over_gt_fraction": "207/262",
+            "pred_over_gt_ratio": 0.7900763358778626
+          },
+          "Neutral": {
+            "count": 1000,
+            "ratio_percent": 62.73525721455458,
+            "gt_count": 713,
+            "pred_over_gt_fraction": "1000/713",
+            "pred_over_gt_ratio": 1.402524544179523
+          },
+          "Surprise": {
+            "count": 132,
+            "ratio_percent": 8.281053952321205,
+            "gt_count": 176,
+            "pred_over_gt_fraction": "132/176",
+            "pred_over_gt_ratio": 0.75
+          },
+          "Fear": {
+            "count": 27,
+            "ratio_percent": 1.693851944792982,
+            "gt_count": 29,
+            "pred_over_gt_fraction": "27/29",
+            "pred_over_gt_ratio": 0.9310344827586207
+          }
+        }
+      }
+    }
+  },
+  "skipped_no_gender": 11,
+  "skipped_failed_after_retries": 0,
+  "missing_modality_stats": {
+    "video_missing_or_unreadable": 0,
+    "audio_missing_or_unreadable": 0
+  }
+}

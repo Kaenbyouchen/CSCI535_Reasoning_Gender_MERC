@@ -1,0 +1,49 @@
+index,speaker,speaker_label,gender,dialogue_id,utterance_id,utterance,context_history_count,gold_emotion,pred_emotion,is_correct,resolved_system_prompt,resolved_user_prompt,audio_attached,video_attached,video_frames_count,raw_model_output
+1,Mark,P1,male,0,0,Why do all you’re coffee mugs have numbers on the bottom?,2,Surprise,Neutral,0,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+Given a full dialogue with multiple utterances, predict one emotion label for EACH utterance.
+Each utterance includes a speaker identifier; use speaker identity and turn-taking context.
+Valid labels: Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Output strictly JSON only with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one label>""}]}
+","Dialogue_ID: 0
+Utterance count: 3
+Dialogue utterances in chronological order:
+- [U0] Speaker=P1: Why do all you’re coffee mugs have numbers on the bottom?
+- [U1] Speaker=P2: Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’
+- [U2] Speaker=P2: Y'know what?
+Note: each line is formatted as [Uid] Speaker=<id>: <text> (e.g., Speaker=P1).
+Return strictly JSON with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one of seven labels>""}]}
+",True,1,2,"{""predictions"":[{""utterance_id"":""0"",""emotion"":""Neutral""},{""utterance_id"":""1"",""emotion"":""Joy""},{""utterance_id"":""2"",""emotion"":""Neutral""}]}"
+2,Rachel,P2,female,0,1,"Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’",2,Anger,Joy,0,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+Given a full dialogue with multiple utterances, predict one emotion label for EACH utterance.
+Each utterance includes a speaker identifier; use speaker identity and turn-taking context.
+Valid labels: Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Output strictly JSON only with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one label>""}]}
+","Dialogue_ID: 0
+Utterance count: 3
+Dialogue utterances in chronological order:
+- [U0] Speaker=P1: Why do all you’re coffee mugs have numbers on the bottom?
+- [U1] Speaker=P2: Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’
+- [U2] Speaker=P2: Y'know what?
+Note: each line is formatted as [Uid] Speaker=<id>: <text> (e.g., Speaker=P1).
+Return strictly JSON with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one of seven labels>""}]}
+",True,1,7,"{""predictions"":[{""utterance_id"":""0"",""emotion"":""Neutral""},{""utterance_id"":""1"",""emotion"":""Joy""},{""utterance_id"":""2"",""emotion"":""Neutral""}]}"
+3,Rachel,P2,female,0,2,Y'know what?,2,Neutral,Neutral,1,"You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+Given a full dialogue with multiple utterances, predict one emotion label for EACH utterance.
+Each utterance includes a speaker identifier; use speaker identity and turn-taking context.
+Valid labels: Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+Output strictly JSON only with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one label>""}]}
+","Dialogue_ID: 0
+Utterance count: 3
+Dialogue utterances in chronological order:
+- [U0] Speaker=P1: Why do all you’re coffee mugs have numbers on the bottom?
+- [U1] Speaker=P2: Oh. That’s so Monica can keep track. That way if one on them is missing, she can be like, ‘Where’s number 27?!’
+- [U2] Speaker=P2: Y'know what?
+Note: each line is formatted as [Uid] Speaker=<id>: <text> (e.g., Speaker=P1).
+Return strictly JSON with schema:
+{""predictions"":[{""utterance_id"":""<id>"",""emotion"":""<one of seven labels>""}]}
+",True,1,1,"{""predictions"":[{""utterance_id"":""0"",""emotion"":""Neutral""},{""utterance_id"":""1"",""emotion"":""Joy""},{""utterance_id"":""2"",""emotion"":""Neutral""}]}"

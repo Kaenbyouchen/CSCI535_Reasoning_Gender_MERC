@@ -1,0 +1,64 @@
+model:
+  type: qwen
+  alias: qwen25_omni7b_cf
+  hf_model_name: Qwen/Qwen2.5-Omni-7B
+  hf_token_env: HF_TOKEN
+  torch_dtype: bf16
+  device_map: auto
+  # Set to flash_attention_2 if you have flash-attn installed (2-3x faster, less VRAM).
+  # Otherwise use sdpa (PyTorch built-in efficient attention) or eager.
+  attn_implementation: sdpa
+  low_cpu_mem_usage: true
+  cache_dir: null
+  temperature: 0.0
+  max_output_tokens: 64
+  max_retries: 2
+  retry_sleep_seconds: 2
+  use_audio_in_video: false
+  disable_talker: true
+  return_audio: false
+
+dataset:
+  name: MELD
+  is_origin: true
+
+task:
+  name: MERC_CF
+  labels: [Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear]
+
+paths:
+  test_csv: data/MELD/test_sent_emo.csv
+  raw_dir: MELD.Raw
+  cf_metadata_csv: data/counterfactual/metadata_counterfactual.csv
+  result_dir: result
+
+eval:
+  modalities: [audio]
+  speaker_mode: anon
+  log_every_n: 50
+  max_samples: null
+  sample_retries: 2
+  sample_timeout_seconds: 600
+  context_window_max: 0
+  inference_unit: utterance
+  audio_source: original
+  save_logits: true
+
+prompt:
+  utterance:
+    system: |
+      You are an expert evaluator for Multimodal Emotion Recognition in Conversation (MERC).
+      You must classify the target utterance into exactly one emotion from:
+      Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear.
+      Use all provided modalities if available.
+      Output strictly JSON only, with this schema:
+      {"emotion": "<one of the seven labels>"}
+    user_template: |
+      Target utterance information:
+      - Speaker: {speaker}
+      - Dialogue_ID: {dialogue_id}
+      - Utterance_ID: {utterance_id}
+      - Text: {utterance}
+      Please predict the emotion label for this utterance.
+    audio_prefix_template: "Audio of TARGET utterance:"
+    video_prefix_template: "Video of TARGET utterance:"

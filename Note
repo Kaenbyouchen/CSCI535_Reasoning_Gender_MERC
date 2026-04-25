@@ -1,7 +1,7 @@
 本地push：
 cd "/Users/weisu/CSCI535/Project相关/MELD-master"
 git add .
-git commit -m "update: Before midterm"
+git commit -m "update: Counterfactural Test"
 git push origin main
 
 CARC pull：

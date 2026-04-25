@@ -25,6 +25,7 @@ logs/
 
 # Experiment outputs
 result/
+!result/IEMOCAP_Summary.csv
 
 # Large datasets / raw media
 MELD.Raw/

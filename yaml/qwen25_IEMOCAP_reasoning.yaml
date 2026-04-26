@@ -53,6 +53,7 @@ auditor:
   api_key_env: OPENAI_API_KEY
   hf_model_name: null
   max_output_tokens: 512
+  global_pattern_max_output_tokens: 4096
   temperature: 0.0
 
 prompt:

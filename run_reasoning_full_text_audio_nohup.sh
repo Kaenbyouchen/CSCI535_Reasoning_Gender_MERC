@@ -2,15 +2,17 @@
 # CoT reasoning: MELD then IEMOCAP, modalities text + audio only.
 # Default: 100 stratified samples per dataset (--n-samples; same logic as yaml subsample + meld_cot_run.py).
 #
-# From project root (e.g. on CARC after conda activate csci535):
-#   mkdir -p logs
-#   nohup bash run_reasoning_full_text_audio_nohup.sh > logs/reasoning_ta_n100_$(date +%Y%m%d_%H%M%S).log 2>&1 &
-#   tail -f logs/reasoning_ta_n100_*.log
+# From project root (e.g. on CARC after conda activate csci535).
+# Redirecting to logs/foo.log requires logs/ to exist — use mkdir in the SAME command:
+#   mkdir -p logs && nohup bash run_reasoning_full_text_audio_nohup.sh > "logs/reasoning_ta_n100_$(date +%Y%m%d_%H%M%S).log" 2>&1 &
+# Follow the newest log (avoid bare glob when no file yet):
+#   tail -f "$(ls -t logs/reasoning_ta_n100_*.log 2>/dev/null | head -1)"
 #
-# Override count:
-#   N_SAMPLES=200 nohup bash run_reasoning_full_text_audio_nohup.sh > logs/... 2>&1 &
+# Override count (still mkdir -p logs && ... if you redirect under logs/):
+#   mkdir -p logs && N_SAMPLES=200 nohup bash run_reasoning_full_text_audio_nohup.sh > "logs/..." 2>&1 &
 set -euo pipefail
 cd "$(dirname "$0")"
+mkdir -p logs
 
 N_SAMPLES="${N_SAMPLES:-100}"
 MELD_CFG="${MELD_CFG:-yaml/qwen25_MELD_reasoning.yaml}"

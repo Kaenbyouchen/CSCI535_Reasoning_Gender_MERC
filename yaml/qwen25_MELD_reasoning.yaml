@@ -67,6 +67,8 @@ auditor:
   api_key_env: OPENAI_API_KEY
   hf_model_name: null
   max_output_tokens: 512
+  # reasoning/global_bias_audit.py (Phase 2 global pattern report)
+  global_pattern_max_output_tokens: 4096
   temperature: 0.0
 
 prompt:

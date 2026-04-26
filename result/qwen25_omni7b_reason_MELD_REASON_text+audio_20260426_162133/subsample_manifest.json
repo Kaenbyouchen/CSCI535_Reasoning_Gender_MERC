@@ -1,0 +1,508 @@
+{
+  "dataset": "MELD",
+  "n": 100,
+  "rows": [
+    {
+      "dialogue_id": "51",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "170",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "120",
+      "utterance_id": "17",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "71",
+      "utterance_id": "11",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "119",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "53",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "126",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "49",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "144",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "17",
+      "utterance_id": "17",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "3",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "34",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "260",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "137",
+      "utterance_id": "9",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "100",
+      "utterance_id": "19",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "165",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "85",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "223",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "201",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "28",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "88",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "53",
+      "utterance_id": "11",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "117",
+      "utterance_id": "7",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "78",
+      "utterance_id": "9",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "245",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "45",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "229",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "17",
+      "utterance_id": "14",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "230",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "68",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "263",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "3",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "217",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "260",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "4",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "222",
+      "utterance_id": "12",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "211",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "153",
+      "utterance_id": "11",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "182",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "96",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "227",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "14",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "153",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "186",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "207",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "184",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "52",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "96",
+      "utterance_id": "7",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "231",
+      "utterance_id": "13",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "118",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "188",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "236",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "83",
+      "utterance_id": "7",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "4",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "194",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "144",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "244",
+      "utterance_id": "15",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "155",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "65",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "100",
+      "utterance_id": "14",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "124",
+      "utterance_id": "9",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "222",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "15",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "263",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "34",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "267",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "58",
+      "utterance_id": "16",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "52",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "1",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "113",
+      "utterance_id": "7",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "90",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "109",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "110",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "4",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "178",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "103",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "259",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "174",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "169",
+      "utterance_id": "13",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "33",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "100",
+      "utterance_id": "5",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "192",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "196",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "233",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "210",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "120",
+      "utterance_id": "13",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "32",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "65",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "80",
+      "utterance_id": "4",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "108",
+      "utterance_id": "9",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "11",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "263",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "205",
+      "utterance_id": "3",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "25",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "254",
+      "utterance_id": "17",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "252",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "36",
+      "utterance_id": "0",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "270",
+      "utterance_id": "10",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "167",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "123",
+      "utterance_id": "6",
+      "in_flip_pool": false
+    }
+  ],
+  "modality": "text+audio",
+  "audio_source": "counterfactual"
+}

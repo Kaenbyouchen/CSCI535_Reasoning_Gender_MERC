@@ -1,0 +1,23 @@
+{
+  "dataset": "MELD",
+  "n": 3,
+  "rows": [
+    {
+      "dialogue_id": "201",
+      "utterance_id": "2",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "51",
+      "utterance_id": "1",
+      "in_flip_pool": false
+    },
+    {
+      "dialogue_id": "260",
+      "utterance_id": "8",
+      "in_flip_pool": false
+    }
+  ],
+  "modality": "text+audio",
+  "audio_source": "counterfactual"
+}

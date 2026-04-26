@@ -34,7 +34,7 @@ paths:
   result_dir: result
 
 subsample:
-  n_samples: 80
+  n_samples: 100
   random_seed: 42
   stratify_emotion_gender: true
 

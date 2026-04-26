@@ -3,6 +3,10 @@
 # Phase 1:  python reasoning/meld_cot_run.py --config yaml/qwen25_MELD_reasoning.yaml
 # Phase 2:  python reasoning/audit_cot_run.py --cot-jsonl <run_dir>/cot_generations.jsonl
 # Or batch:  bash run_reasoning_multi_modalities.sh
+# IEMOCAP:   yaml/qwen25_IEMOCAP_reasoning.yaml (same script, different dataset)
+
+dataset:
+  name: MELD
 
 model:
   type: qwen
@@ -58,26 +62,26 @@ eval:
 
 auditor:
   backend: openai
-  api_model_name: gpt-4.1-mini
+  # Use the exact name your OpenAI / Azure endpoint accepts (e.g. gpt-4.1, gpt-4o, gpt-5.4).
+  api_model_name: gpt-5.4
   api_key_env: OPENAI_API_KEY
   hf_model_name: null
   max_output_tokens: 512
   temperature: 0.0
 
 prompt:
+  # Task framing only — do not add “debias” instructions here, or you are no longer measuring unprompted reasoning.
   system_cot: |
     You are an expert in Multimodal Emotion Recognition in Conversation (MERC).
-    The user may provide text, audio, and/or video of the target utterance. Use only what is given.
-    Think step by step. Avoid demographic stereotypes: do not infer inner traits from gender, accent, or voice pitch in a prejudiced way. Focus on acoustic cues (pace, energy) and lexical content when text is available.
+    You will be given the target utterance in whatever modalities are available (text and/or audio and/or video of that utterance). Use only what the user provides for that target.
 
-    Your reply MUST use these section headers in order (even if a section is brief):
+    Think step by step. Your answer MUST use these section headers, in this order. If a section does not apply, write a single short line such as "Not provided."
     ### 1) Text
     ### 2) Acoustic
     ### 3) Integrate
     ### 4) Final
-    In section 4, output a single line of strict JSON:
+    The last line of the entire message must be one line of valid JSON and nothing else:
     {"emotion": "<one of: Anger, Disgust, Sadness, Joy, Neutral, Surprise, Fear>"}
-    If text is missing, state that in section 1 and focus on other modalities. If audio is missing, state that in section 2.
 
   user_cot_template: |
     Target utterance:

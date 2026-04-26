@@ -1,10 +1,12 @@
 #!/usr/bin/env python3
 """
-MELD Task 3 — Chain-of-thought generation with Qwen2.5-Omni (same CF success ∩ test as counterfactual eval).
+Task 3 — CoT (chain-of-thought) with Qwen2.5-Omni.
+  - MELD:   CF-success ∩ MELD test (same as counterfactual eval); optional BL/CF pred CSVs for flip subsample
+  - IEMOCAP: test_sessions from yaml (e.g. Session 5), same utterance format as iemocap_eval
 
 Usage (from project root):
   python reasoning/meld_cot_run.py --config yaml/qwen25_MELD_reasoning.yaml
-  python reasoning/meld_cot_run.py --config yaml/qwen25_MELD_reasoning.yaml --modalities text audio video
+  python reasoning/meld_cot_run.py --config yaml/qwen25_IEMOCAP_reasoning.yaml --modalities text audio
 """
 from __future__ import annotations
 
@@ -35,7 +37,25 @@ def _load_mcf():
     return m
 
 
+def _load_ice():
+    p = _ROOT / "baseline" / "iemocap_eval.py"
+    spec = importlib.util.spec_from_file_location("ice", p)
+    m = importlib.util.module_from_spec(spec)
+    spec.loader.exec_module(m)
+    return m
+
+
 mcf = _load_mcf()
+_ice = None
+
+
+def _ice_mod():
+    global _ice
+    if _ice is None:
+        _ice = _load_ice()
+    return _ice
+
+
 read_yaml = mcf.read_yaml
 YAML = mcf.YAML
 parse_pred = mcf.parse_pred
@@ -64,13 +84,17 @@ def _load_pred_csv(path: Path) -> dict[tuple[str, str], str]:
     return out
 
 
-def _stratify_fill(rows, n: int, rng: random.Random) -> list:
+def _stratify_fill(rows, n: int, rng: random.Random, is_meld: bool) -> list:
     if n <= 0 or not rows:
         return []
     g = defaultdict(list)
     for r in rows:
-        e = normalize_emotion(r.get("Emotion", ""))
-        gen = (r.get("_cf") or {}).get("gender") or "unk"
+        if is_meld:
+            e = normalize_emotion(r.get("Emotion", ""))
+            gen = (r.get("_cf") or {}).get("gender") or "unk"
+        else:
+            e = str(r.get("Emotion", "")).strip()
+            gen = str(r.get("gender") or "unk")
         g[(e, gen)].append(r)
     for k in g:
         rng.shuffle(g[k])
@@ -95,7 +119,32 @@ def _stratify_fill(rows, n: int, rng: random.Random) -> list:
     return out[:n]
 
 
-def subsample_rows(
+def build_iemocap_rows(cfg) -> list[dict]:
+    ice = _ice_mod()
+    ds = cfg.get("dataset", {})
+    data_dir = _ROOT / ds.get("data_dir", "data/IEMOCAP_full_release")
+    labels = list(cfg.get("task", {}).get("labels", []))
+    if not labels:
+        raise ValueError("IEMOCAP: task.labels is required in YAML.")
+    sessions = ds.get("test_sessions", [5])
+    flt = bool(ds.get("filter_other", True))
+    dials = ice.load_iemocap(data_dir, set(labels), filter_other=flt, sessions=sessions)
+    rows = []
+    for d in dials:
+        for u in d["utterances"]:
+            rows.append({
+                "Dialogue_ID": d["dialogue_id"],
+                "Utterance_ID": u["utterance_id"],
+                "Speaker": u.get("speaker", "Unknown"),
+                "Emotion": u["emotion"],
+                "Utterance": u.get("text", ""),
+                "gender": u.get("gender", ""),
+                "_iem": {"dialogue": d, "utt": u},
+            })
+    return rows
+
+
+def subsample_rows_meld(
     all_rows: list[dict],
     n: int,
     seed: int,
@@ -118,7 +167,7 @@ def subsample_rows(
     rest = [r for r in all_rows if kfn(r) not in skeys]
     need = n - len(selected)
     if need > 0:
-        more = _stratify_fill(rest, need, rng)
+        more = _stratify_fill(rest, need, rng, True)
         for r in more:
             if kfn(r) not in skeys:
                 skeys.add(kfn(r))
@@ -134,9 +183,9 @@ def subsample_rows(
     return selected[:n]
 
 
-def build_run_dir(result_root, model_alias, modality_tag: str) -> Path:
+def build_run_dir(result_root, model_alias, modality_tag: str, dataset_tag: str) -> Path:
     ts = datetime.now().strftime("%Y%m%d_%H%M%S")
-    name = f"{model_alias}_MELD_REASON_{modality_tag}_{ts}"
+    name = f"{model_alias}_{dataset_tag}_REASON_{modality_tag}_{ts}"
     d = Path(result_root) / name
     d.mkdir(parents=True, exist_ok=True)
     return d
@@ -159,10 +208,17 @@ def main():
     sub = cfg.get("subsample", {})
     n_samples = int(args.n_samples or sub.get("n_samples", 80))
     seed = int(sub.get("random_seed", 42))
-    audio_source = str(sub.get("audio_source", "counterfactual")).lower()
-    if audio_source not in ("original", "counterfactual"):
-        raise ValueError("subsample.audio_source must be original or counterfactual")
-    min_flips = int(sub.get("min_flips_in_batch", 0))
+    is_meld = str(cfg.get("dataset", {}).get("name", "MELD")).strip().upper() == "MELD"
+    task_labels = list(cfg.get("task", {}).get("labels", list(EMOTIONS)))
+
+    if is_meld:
+        audio_source = str(sub.get("audio_source", "counterfactual")).lower()
+        if audio_source not in ("original", "counterfactual"):
+            raise ValueError("MELD subsample.audio_source must be original or counterfactual")
+        min_flips = int(sub.get("min_flips_in_batch", 0))
+    else:
+        audio_source = "original"
+        min_flips = 0
 
     modalities = [m.lower() for m in (args.modalities or cfg.get("eval", {}).get("modalities", ["text", "audio"]))]
     if not modalities:
@@ -175,64 +231,80 @@ def main():
     if include_audio or include_video:
         ensure_ffmpeg()
 
-    test_csv = Path(paths["test_csv"])
-    raw_dir = Path(paths["raw_dir"])
-    cf_meta = Path(paths["cf_metadata_csv"])
     result_root = Path(paths.get("result_dir", "result"))
-
-    # CF map
-    cf_map = {}
-    with cf_meta.open(newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            if str(row.get("conversion_status", "")).strip().lower() != "success":
-                continue
-            key = (str(row["dialogue_id"]).strip(), str(row["utterance_id"]).strip())
-            cf_rel = str(row.get("converted_audio_path", "")).strip().lstrip("./")
-            cf_p = Path(cf_rel) if cf_rel else None
-            cf_map[key] = {
-                "speaker": row.get("speaker", "").strip(),
-                "gender": normalize_gender(row.get("gender", "")),
-                "target_gender": normalize_gender(row.get("target_gender", "")),
-                "cf_audio_path": cf_p,
-            }
-
     all_rows: list[dict] = []
-    with test_csv.open(newline="", encoding="utf-8") as f:
-        for row in csv.DictReader(f):
-            key = (str(row["Dialogue_ID"]).strip(), str(row["Utterance_ID"]).strip())
-            if key in cf_map:
-                row["_cf"] = cf_map[key]
-                all_rows.append(row)
+    bl_pred_map: dict = {}
+    cf_pred_map: dict = {}
+    raw_dir: Path = Path(".")
 
-    bl_path = paths.get("predictions_bl_csv")
-    cf_pred_path = paths.get("predictions_cf_csv")
-    if isinstance(bl_path, str) and bl_path.lower() in ("null", "none", ""):
-        bl_path = None
-    if isinstance(cf_pred_path, str) and cf_pred_path.lower() in ("null", "none", ""):
-        cf_pred_path = None
-    if bl_path:
-        bl_path = (Path(bl_path) if Path(bl_path).is_absolute() else _ROOT / bl_path)
-    if cf_pred_path:
-        cf_pred_path = (Path(cf_pred_path) if Path(cf_pred_path).is_absolute() else _ROOT / cf_pred_path)
-    bl_pred_map = _load_pred_csv(Path(bl_path)) if bl_path else {}
-    cf_pred_map = _load_pred_csv(Path(cf_pred_path)) if cf_pred_path else {}
-    if min_flips and (not bl_pred_map or not cf_pred_map):
-        print("[WARN] min_flips>0 but BL/CF prediction CSVs missing; flip-aware subsample degraded.")
+    if is_meld:
+        test_csv = Path(paths["test_csv"])
+        raw_dir = Path(paths["raw_dir"])
+        cf_meta = Path(paths["cf_metadata_csv"])
+        cf_map: dict = {}
+        with cf_meta.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                if str(row.get("conversion_status", "")).strip().lower() != "success":
+                    continue
+                key = (str(row["dialogue_id"]).strip(), str(row["utterance_id"]).strip())
+                cf_rel = str(row.get("converted_audio_path", "")).strip().lstrip("./")
+                cf_p = Path(cf_rel) if cf_rel else None
+                cf_map[key] = {
+                    "speaker": row.get("speaker", "").strip(),
+                    "gender": normalize_gender(row.get("gender", "")),
+                    "target_gender": normalize_gender(row.get("target_gender", "")),
+                    "cf_audio_path": cf_p,
+                }
+        with test_csv.open(newline="", encoding="utf-8") as f:
+            for row in csv.DictReader(f):
+                key = (str(row["Dialogue_ID"]).strip(), str(row["Utterance_ID"]).strip())
+                if key in cf_map:
+                    row["_cf"] = cf_map[key]
+                    all_rows.append(row)
+        bl_path = paths.get("predictions_bl_csv")
+        cf_pred_path = paths.get("predictions_cf_csv")
+        if isinstance(bl_path, str) and str(bl_path).lower() in ("null", "none", ""):
+            bl_path = None
+        if isinstance(cf_pred_path, str) and str(cf_pred_path).lower() in ("null", "none", ""):
+            cf_pred_path = None
+        if bl_path:
+            bl_path = (Path(bl_path) if Path(bl_path).is_absolute() else _ROOT / bl_path)
+        if cf_pred_path:
+            cf_pred_path = (Path(cf_pred_path) if Path(cf_pred_path).is_absolute() else _ROOT / cf_pred_path)
+        bl_pred_map = _load_pred_csv(Path(bl_path)) if bl_path else {}
+        cf_pred_map = _load_pred_csv(Path(cf_pred_path)) if cf_pred_path else {}
+        if min_flips and (not bl_pred_map or not cf_pred_map):
+            print("[WARN] min_flips>0 but BL/CF prediction CSVs missing; flip-aware subsample degraded.")
+    else:
+        all_rows = build_iemocap_rows(cfg)
+        # For video/audio paths, iemocap load uses data_dir; expose raw_dir for any relative resolve
+        raw_dir = _ROOT / cfg.get("dataset", {}).get("data_dir", "data/IEMOCAP_full_release")
 
+    if not all_rows:
+        raise RuntimeError("No utterances in pool (check paths / sessions / MELD CF filter).")
     n_cap = min(n_samples, len(all_rows))
     if n_cap >= len(all_rows):
         rows_kept = all_rows
-    elif sub.get("stratify_emotion_gender", True):
-        rows_kept = subsample_rows(all_rows, n_cap, seed, min_flips, bl_pred_map, cf_pred_map)
+    elif is_meld and sub.get("stratify_emotion_gender", True):
+        rows_kept = subsample_rows_meld(
+            all_rows, n_cap, seed, min_flips, bl_pred_map, cf_pred_map)
+    elif (not is_meld) and sub.get("stratify_emotion_gender", True):
+        rows_kept = _stratify_fill(
+            all_rows, n_cap, random.Random(seed), is_meld=False)
     else:
         rng = random.Random(seed)
         pool = all_rows[:]
         rng.shuffle(pool)
-        rows_kept = pool[:n_cap]
-    print(f"[Reason] using {len(rows_kept)} utterances (from {len(all_rows)} CF-success test rows)")
+        rows_kept = pool[:n_cap] if n_cap < len(all_rows) else all_rows
+    if is_meld:
+        print(f"[Reason] MELD: {len(rows_kept)} utterances (from {len(all_rows)} CF-success test rows).")
+    else:
+        print(f"[Reason] IEMOCAP: {len(rows_kept)} utterances (pool {len(all_rows)} in selected sessions).")
 
     modality_tag = "+".join(modalities)
-    run_dir = build_run_dir(result_root, model_alias, modality_tag)
+    dtag = "MELD" if is_meld else "IEMOCAP"
+    run_dir = build_run_dir(result_root, model_alias, modality_tag, dtag)
+    ice = _ice_mod()
     tmp_media = run_dir / "tmp_media"
     tmp_media.mkdir(parents=True, exist_ok=True)
 
@@ -251,26 +323,34 @@ def main():
     v_max_fr = evc.get("video_max_frames")
     video_max_frames = int(v_max_fr) if v_max_fr is not None else None
 
-    speaker_mode = str(evc.get("speaker_mode", "anon"))
+    speaker_mode = str(evc.get("speaker_mode", "anon" if is_meld else "none"))
     speaker_of = build_speaker_labeler(speaker_mode)
-    resolver = ClipResolver(raw_dir)
+    resolver = ClipResolver(raw_dir) if is_meld else None
 
     sample_records = []
     for row in rows_kept:
         key = (str(row["Dialogue_ID"]).strip(), str(row["Utterance_ID"]).strip())
-        is_fl = bool(bl_pred_map and cf_pred_map and
-                     bl_pred_map.get(key) != cf_pred_map.get(key))
-        sample_records.append({
-            "dialogue_id": key[0], "utterance_id": key[1],
-            "in_flip_pool": is_fl and key in bl_pred_map and key in cf_pred_map,
-        })
+        if is_meld:
+            is_fl = bool(bl_pred_map and cf_pred_map and
+                         bl_pred_map.get(key) != cf_pred_map.get(key))
+            sample_records.append({
+                "dialogue_id": key[0], "utterance_id": key[1],
+                "in_flip_pool": is_fl and key in bl_pred_map and key in cf_pred_map,
+            })
+        else:
+            sample_records.append({
+                "dialogue_id": key[0], "utterance_id": key[1],
+            })
     with (run_dir / "subsample_manifest.json").open("w", encoding="utf-8") as f:
-        json.dump({"n": len(rows_kept), "rows": sample_records, "modality": modality_tag,
-                   "audio_source": audio_source}, f, indent=2, ensure_ascii=False)
+        man = {
+            "dataset": dtag, "n": len(rows_kept), "rows": sample_records,
+            "modality": modality_tag, "audio_source": audio_source,
+        }
+        json.dump(man, f, indent=2, ensure_ascii=False)
 
-    # Save run config
     with (run_dir / "run_config.yaml").open("w", encoding="utf-8") as f:
         dump = {
+            "dataset": cfg.get("dataset", {"name": "MELD"}),
             "model": model, "task": cfg.get("task", {}), "paths": {k: str(v) for k, v in paths.items()},
             "subsample": sub, "eval": {**evc, "modalities": modalities},
         }
@@ -335,19 +415,31 @@ def main():
         spk = str(row.get("Speaker", "")).strip()
         sl = speaker_of(d_id, spk)
         utt = str(row.get("Utterance", "")).strip()
-        gold = normalize_emotion(row.get("Emotion", ""))
-        cfi = row["_cf"]
-        ogen = cfi.get("gender", "")
-        tgen = cfi.get("target_gender", "")
-        use_cf = audio_source == "counterfactual"
-        used_cf_audio = "no"
-        if use_cf and cfi.get("cf_audio_path") and cfi["cf_audio_path"].exists():
-            used_cf_audio = "yes"
-        key = (d_id, u_id)
-        is_flip = (bool(bl_pred_map and cf_pred_map) and
-                   bl_pred_map.get(key) != cf_pred_map.get(key))
-
         utt_for = utt if include_text else TEXT_OMITTED
+        is_flip = False
+        d_rec, uu = None, None
+
+        if is_meld:
+            gold = normalize_emotion(row.get("Emotion", ""))
+            cfi = row["_cf"]
+            ogen = cfi.get("gender", "")
+            tgen = cfi.get("target_gender", "")
+            use_cf = audio_source == "counterfactual"
+            used_cf_audio = "no"
+            if use_cf and cfi.get("cf_audio_path") and cfi["cf_audio_path"].exists():
+                used_cf_audio = "yes"
+            is_flip = bool(
+                bl_pred_map and cf_pred_map
+                and bl_pred_map.get((d_id, u_id)) != cf_pred_map.get((d_id, u_id))
+            )
+        else:
+            gold = str(row.get("Emotion", "")).strip()
+            ogen = str(row.get("gender", ""))
+            tgen = "n/a"
+            used_cf_audio = "n/a"
+            iem = row["_iem"]
+            d_rec, uu = iem["dialogue"], iem["utt"]
+
         user_text = render_template(user_tmpl, {
             "speaker": sl, "dialogue_id": d_id, "utterance_id": u_id, "utterance": utt_for,
             "gold_emotion": gold, "gender": ogen or "unknown",
@@ -355,36 +447,66 @@ def main():
         })
 
         user_content = [{"type": "text", "text": user_text}]
-        clip = resolver.resolve("test", d_id, u_id)
-        if include_video:
-            if clip is None:
-                user_content.append({"type": "text", "text": f"{video_prefix} (missing file)"})
-            else:
-                user_content.append({"type": "text", "text": video_prefix})
-                vitem = {"type": "video", "video": str(clip), "fps": video_fps, "max_pixels": video_max_pixels}
-                if video_max_frames is not None:
-                    vitem["max_frames"] = video_max_frames
-                user_content.append(vitem)
-        if include_audio:
-            wav = None
-            if audio_source == "original" and clip is not None:
-                wav = extract_audio_from_video(clip, tmp_media)
-            elif audio_source == "counterfactual" and cfi.get("cf_audio_path"):
-                p = cfi["cf_audio_path"]
-                if p.exists():
-                    wav = normalize_wav(p, tmp_media)
-            if wav is None:
-                user_content.append({"type": "text", "text": f"{audio_prefix} (unavailable; check paths)"})
-            else:
-                user_content.append({"type": "text", "text": audio_prefix})
-                user_content.append({"type": "audio", "audio": str(wav)})
+        if is_meld and resolver is not None:
+            clip = resolver.resolve("test", d_id, u_id)
+        else:
+            clip = None
+
+        if is_meld:
+            if include_video:
+                if clip is None:
+                    user_content.append({"type": "text", "text": f"{video_prefix} (missing file)"})
+                else:
+                    user_content.append({"type": "text", "text": video_prefix})
+                    vitem = {"type": "video", "video": str(clip), "fps": video_fps,
+                              "max_pixels": video_max_pixels}
+                    if video_max_frames is not None:
+                        vitem["max_frames"] = video_max_frames
+                    user_content.append(vitem)
+            if include_audio:
+                wav = None
+                if audio_source == "original" and clip is not None:
+                    wav = extract_audio_from_video(clip, tmp_media)
+                elif audio_source == "counterfactual" and cfi.get("cf_audio_path"):
+                    p = cfi["cf_audio_path"]
+                    if p and Path(p).exists():
+                        wav = normalize_wav(p, tmp_media)
+                if wav is None:
+                    user_content.append({"type": "text", "text": f"{audio_prefix} (unavailable; check paths)"})
+                else:
+                    user_content.append({"type": "text", "text": audio_prefix})
+                    user_content.append({"type": "audio", "audio": str(wav)})
+        else:
+            wav_path, avi_path = d_rec.get("wav_path"), d_rec.get("avi_path")
+            if include_video and avi_path and Path(avi_path).exists():
+                seg_v = ice.extract_utt_video(avi_path, uu["start"], uu["end"], tmp_media, uu["utterance_id"])
+                if not seg_v:
+                    user_content.append({"type": "text", "text": f"{video_prefix} (extract failed)"})
+                else:
+                    user_content.append({"type": "text", "text": video_prefix})
+                    vitem = {"type": "video", "video": str(seg_v), "fps": video_fps,
+                              "max_pixels": video_max_pixels}
+                    if video_max_frames is not None:
+                        vitem["max_frames"] = video_max_frames
+                    user_content.append(vitem)
+            elif include_video:
+                user_content.append({"type": "text", "text": f"{video_prefix} (missing .avi)"})
+            if include_audio and wav_path and Path(wav_path).exists():
+                seg_a = ice.extract_utt_wav(wav_path, uu["start"], uu["end"],
+                                            tmp_media, uu["utterance_id"])
+                if not seg_a:
+                    user_content.append({"type": "text", "text": f"{audio_prefix} (extract failed)"})
+                else:
+                    user_content.append({"type": "text", "text": audio_prefix})
+                    user_content.append({"type": "audio", "audio": str(seg_a)})
+            elif include_audio:
+                user_content.append({"type": "text", "text": f"{audio_prefix} (missing .wav)"})
 
         convo = [
             {"role": "system", "content": [{"type": "text", "text": system_cot}]},
             {"role": "user", "content": user_content},
         ]
-        raw = ""
-        err = ""
+        raw, err = "", ""
         for _ in range(retries):
             try:
                 t_in = qproc.apply_chat_template(
@@ -404,7 +526,6 @@ def main():
                 if isinstance(seq, (tuple, list)) and not hasattr(seq, "shape"):
                     seq = seq[0]
                 li = ins.input_ids.shape[-1]
-                nids = seq[0, li:].tolist()
                 raw = qproc.batch_decode(
                     seq[:, li:], skip_special_tokens=True,
                     clean_up_tokenization_spaces=False)[0].strip()
@@ -415,14 +536,18 @@ def main():
         else:
             raw = ""
 
-        pred_emo = parse_pred(raw) if raw else ""
+        if is_meld:
+            pred_emo = parse_pred(raw) if raw else ""
+        else:
+            pred_emo = ice.parse_pred_utterance(raw, task_labels) if raw else ""
+
         rec = {
-            "dialogue_id": d_id, "utterance_id": u_id,
+            "dataset": dtag, "dialogue_id": d_id, "utterance_id": u_id,
             "utterance": utt, "gold_emotion": gold, "pred_emotion": pred_emo,
-            "raw_cot": raw, "error": err if not raw and err else "",
+            "raw_cot": raw, "error": err if (not raw and err) else "",
             "model": model_name, "modalities": modalities, "audio_source": audio_source,
             "used_cf_audio": used_cf_audio, "gender": ogen, "target_gender": tgen,
-            "is_bl_cf_flip": is_flip, "index": i,
+            "is_bl_cf_flip": is_flip if is_meld else None, "index": i,
         }
         f_out.write(json.dumps(rec, ensure_ascii=False) + "\n")
         f_out.flush()

@@ -41,7 +41,7 @@ for m in "${MODALITIES[@]}"; do
   echo " Started: $(date '+%F %T')"
   echo "============================================================"
   python reasoning/meld_cot_run.py --config "$CONFIG" --modalities $m
-  LATEST=$(ls -dt result/qwen25_omni7b_reason_MELD_REASON_* 2>/dev/null | head -1)
+  LATEST=$(ls -dt result/*_REASON_* 2>/dev/null | head -1)
   if [ -z "$LATEST" ] || [ ! -f "$LATEST/cot_generations.jsonl" ]; then
     echo "[ERR] no cot_generations.jsonl"
     continue

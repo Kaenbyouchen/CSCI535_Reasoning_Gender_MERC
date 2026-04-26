@@ -11,7 +11,7 @@ cd "$(dirname "$0")"
 CONFIG="${CONFIG:-yaml/qwen25_MELD_reasoning.yaml}"
 EXTRA=("$@")
 python reasoning/meld_cot_run.py --config "$CONFIG" "${EXTRA[@]}"
-LATEST=$(ls -dt result/qwen25_omni7b_reason_MELD_REASON_* 2>/dev/null | head -1)
+LATEST=$(ls -dt result/*_REASON_* 2>/dev/null | head -1)
 if [ -z "$LATEST" ] || [ ! -f "$LATEST/cot_generations.jsonl" ]; then
   echo "[run_reasoning_cot] No output dir found."
   exit 1

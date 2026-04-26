@@ -556,9 +556,14 @@ def main():
             print(f"  [{i}/{len(rows_kept)}] {dt:.0f}s elapsed, last pred={pred_emo}")
 
     f_out.close()
+    out_abs = out_jsonl.resolve()
+    try:
+        out_rel = str(out_abs.relative_to(_ROOT))
+    except ValueError:
+        out_rel = str(out_abs)
     with (run_dir / "summary.json").open("w", encoding="utf-8") as f:
         json.dump({
-            "n_written": len(rows_kept), "out": str(out_jsonl.relative_to(_ROOT)),
+            "n_written": len(rows_kept), "out": out_rel,
         }, f, indent=2)
     print(f"Done. {out_jsonl}")
 

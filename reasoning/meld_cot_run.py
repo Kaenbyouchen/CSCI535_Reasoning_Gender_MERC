@@ -525,10 +525,16 @@ def main():
                 seq = out[0] if not hasattr(out, "sequences") else out.sequences
                 if isinstance(seq, (tuple, list)) and not hasattr(seq, "shape"):
                     seq = seq[0]
-                li = ins.input_ids.shape[-1]
-                raw = qproc.batch_decode(
-                    seq[:, li:], skip_special_tokens=True,
-                    clean_up_tokenization_spaces=False)[0].strip()
+                li = int(ins.input_ids.shape[-1])
+                if isinstance(seq, torch.Tensor) and seq.dim() == 1:
+                    gen_ids = seq[li:]
+                    raw = qproc.batch_decode(
+                        gen_ids.unsqueeze(0), skip_special_tokens=True,
+                        clean_up_tokenization_spaces=False)[0].strip()
+                else:
+                    raw = qproc.batch_decode(
+                        seq[:, li:], skip_special_tokens=True,
+                        clean_up_tokenization_spaces=False)[0].strip()
                 break
             except Exception as exc:
                 err = str(exc)

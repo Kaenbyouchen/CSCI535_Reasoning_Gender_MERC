@@ -1,0 +1,4 @@
+{
+  "n_written": 100,
+  "out": "result/qwen25_omni7b_reason_IEMOCAP_REASON_text+audio_20260426_173130/cot_generations.jsonl"
+}

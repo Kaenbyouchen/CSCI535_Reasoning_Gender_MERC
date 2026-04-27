@@ -1,0 +1,408 @@
+{
+  "dataset": "IEMOCAP",
+  "n": 100,
+  "rows": [
+    {
+      "dialogue_id": "Ses05M_script01_1b",
+      "utterance_id": "Ses05M_script01_1b_M016"
+    },
+    {
+      "dialogue_id": "Ses05M_impro07",
+      "utterance_id": "Ses05M_impro07_F030"
+    },
+    {
+      "dialogue_id": "Ses05F_impro06",
+      "utterance_id": "Ses05F_impro06_M020"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_2",
+      "utterance_id": "Ses05M_script03_2_M026"
+    },
+    {
+      "dialogue_id": "Ses05F_impro06",
+      "utterance_id": "Ses05F_impro06_F014"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_F032"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_3",
+      "utterance_id": "Ses05F_script01_3_F016"
+    },
+    {
+      "dialogue_id": "Ses05M_script02_1",
+      "utterance_id": "Ses05M_script02_1_M017"
+    },
+    {
+      "dialogue_id": "Ses05M_impro07",
+      "utterance_id": "Ses05M_impro07_F015"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_M025"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_M004"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_1",
+      "utterance_id": "Ses05F_script03_1_M006"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F019"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_2",
+      "utterance_id": "Ses05F_script01_2_F009"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_M047"
+    },
+    {
+      "dialogue_id": "Ses05F_impro08",
+      "utterance_id": "Ses05F_impro08_F020"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_1",
+      "utterance_id": "Ses05F_script01_1_M000"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_M020"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1b",
+      "utterance_id": "Ses05M_script01_1b_F028"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_F042"
+    },
+    {
+      "dialogue_id": "Ses05F_impro03",
+      "utterance_id": "Ses05F_impro03_F039"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_1",
+      "utterance_id": "Ses05F_script03_1_M013"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F007"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_M015"
+    },
+    {
+      "dialogue_id": "Ses05F_impro04",
+      "utterance_id": "Ses05F_impro04_M039"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_1",
+      "utterance_id": "Ses05M_script03_1_M002"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F016"
+    },
+    {
+      "dialogue_id": "Ses05M_impro01",
+      "utterance_id": "Ses05M_impro01_F013"
+    },
+    {
+      "dialogue_id": "Ses05M_impro01",
+      "utterance_id": "Ses05M_impro01_M014"
+    },
+    {
+      "dialogue_id": "Ses05M_impro08",
+      "utterance_id": "Ses05M_impro08_F009"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_M022"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_M034"
+    },
+    {
+      "dialogue_id": "Ses05F_impro06",
+      "utterance_id": "Ses05F_impro06_F022"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_2",
+      "utterance_id": "Ses05M_script03_2_F039"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F017"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_1",
+      "utterance_id": "Ses05M_script03_1_M033"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F015"
+    },
+    {
+      "dialogue_id": "Ses05F_script02_2",
+      "utterance_id": "Ses05F_script02_2_M035"
+    },
+    {
+      "dialogue_id": "Ses05M_impro08",
+      "utterance_id": "Ses05M_impro08_M008"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F002"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_2",
+      "utterance_id": "Ses05F_script01_2_F007"
+    },
+    {
+      "dialogue_id": "Ses05M_impro04",
+      "utterance_id": "Ses05M_impro04_M014"
+    },
+    {
+      "dialogue_id": "Ses05F_impro04",
+      "utterance_id": "Ses05F_impro04_F038"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_M001"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_2",
+      "utterance_id": "Ses05F_script03_2_M042"
+    },
+    {
+      "dialogue_id": "Ses05F_impro02",
+      "utterance_id": "Ses05F_impro02_F034"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_2",
+      "utterance_id": "Ses05M_script03_2_F035"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_3",
+      "utterance_id": "Ses05F_script01_3_F009"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_1",
+      "utterance_id": "Ses05F_script03_1_M019"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F002"
+    },
+    {
+      "dialogue_id": "Ses05F_impro03",
+      "utterance_id": "Ses05F_impro03_M068"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_M032"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F017"
+    },
+    {
+      "dialogue_id": "Ses05F_script02_2",
+      "utterance_id": "Ses05F_script02_2_F024"
+    },
+    {
+      "dialogue_id": "Ses05F_impro02",
+      "utterance_id": "Ses05F_impro02_M006"
+    },
+    {
+      "dialogue_id": "Ses05F_impro08",
+      "utterance_id": "Ses05F_impro08_F029"
+    },
+    {
+      "dialogue_id": "Ses05M_impro06",
+      "utterance_id": "Ses05M_impro06_M017"
+    },
+    {
+      "dialogue_id": "Ses05M_impro01",
+      "utterance_id": "Ses05M_impro01_M015"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_F004"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_2",
+      "utterance_id": "Ses05M_script03_2_F036"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F010"
+    },
+    {
+      "dialogue_id": "Ses05F_impro03",
+      "utterance_id": "Ses05F_impro03_M046"
+    },
+    {
+      "dialogue_id": "Ses05F_impro07",
+      "utterance_id": "Ses05F_impro07_F016"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_M013"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_M007"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F003"
+    },
+    {
+      "dialogue_id": "Ses05F_impro04",
+      "utterance_id": "Ses05F_impro04_F011"
+    },
+    {
+      "dialogue_id": "Ses05M_impro04",
+      "utterance_id": "Ses05M_impro04_M038"
+    },
+    {
+      "dialogue_id": "Ses05M_impro08",
+      "utterance_id": "Ses05M_impro08_F015"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_3",
+      "utterance_id": "Ses05F_script01_3_M034"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_M025"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_1",
+      "utterance_id": "Ses05F_script01_1_F000"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_2",
+      "utterance_id": "Ses05F_script01_2_F010"
+    },
+    {
+      "dialogue_id": "Ses05M_script02_2",
+      "utterance_id": "Ses05M_script02_2_F038"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_1",
+      "utterance_id": "Ses05F_script03_1_M028"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_1",
+      "utterance_id": "Ses05F_script03_1_F025"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_M023"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_M031"
+    },
+    {
+      "dialogue_id": "Ses05M_impro02",
+      "utterance_id": "Ses05M_impro02_F015"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_F039"
+    },
+    {
+      "dialogue_id": "Ses05F_script02_2",
+      "utterance_id": "Ses05F_script02_2_M011"
+    },
+    {
+      "dialogue_id": "Ses05M_impro04",
+      "utterance_id": "Ses05M_impro04_F004"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_3",
+      "utterance_id": "Ses05F_script01_3_M035"
+    },
+    {
+      "dialogue_id": "Ses05F_script02_2",
+      "utterance_id": "Ses05F_script02_2_M025"
+    },
+    {
+      "dialogue_id": "Ses05F_impro06",
+      "utterance_id": "Ses05F_impro06_F000"
+    },
+    {
+      "dialogue_id": "Ses05M_script01_1",
+      "utterance_id": "Ses05M_script01_1_F022"
+    },
+    {
+      "dialogue_id": "Ses05F_impro03",
+      "utterance_id": "Ses05F_impro03_F057"
+    },
+    {
+      "dialogue_id": "Ses05M_script02_1",
+      "utterance_id": "Ses05M_script02_1_M010"
+    },
+    {
+      "dialogue_id": "Ses05M_script03_1",
+      "utterance_id": "Ses05M_script03_1_F003"
+    },
+    {
+      "dialogue_id": "Ses05F_script01_3",
+      "utterance_id": "Ses05F_script01_3_M008"
+    },
+    {
+      "dialogue_id": "Ses05F_impro04",
+      "utterance_id": "Ses05F_impro04_M038"
+    },
+    {
+      "dialogue_id": "Ses05F_impro02",
+      "utterance_id": "Ses05F_impro02_F006"
+    },
+    {
+      "dialogue_id": "Ses05F_impro04",
+      "utterance_id": "Ses05F_impro04_F037"
+    },
+    {
+      "dialogue_id": "Ses05F_impro08",
+      "utterance_id": "Ses05F_impro08_M002"
+    },
+    {
+      "dialogue_id": "Ses05M_impro05",
+      "utterance_id": "Ses05M_impro05_F002"
+    },
+    {
+      "dialogue_id": "Ses05F_impro02",
+      "utterance_id": "Ses05F_impro02_M041"
+    },
+    {
+      "dialogue_id": "Ses05F_script03_2",
+      "utterance_id": "Ses05F_script03_2_M040"
+    },
+    {
+      "dialogue_id": "Ses05F_impro02",
+      "utterance_id": "Ses05F_impro02_F037"
+    },
+    {
+      "dialogue_id": "Ses05F_impro05",
+      "utterance_id": "Ses05F_impro05_F019"
+    },
+    {
+      "dialogue_id": "Ses05M_impro03",
+      "utterance_id": "Ses05M_impro03_F022"
+    }
+  ],
+  "modality": "text+audio",
+  "audio_source": "original"
+}

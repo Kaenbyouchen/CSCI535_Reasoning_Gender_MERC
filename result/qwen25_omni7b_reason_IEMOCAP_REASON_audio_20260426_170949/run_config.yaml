@@ -1,0 +1,47 @@
+dataset:
+  name: IEMOCAP
+  data_dir: data/IEMOCAP_full_release
+  test_sessions:
+  - 5
+  filter_other: true
+model:
+  type: qwen
+  alias: qwen25_omni7b_reason
+  hf_model_name: Qwen/Qwen2.5-Omni-7B
+  hf_token_env: HF_TOKEN
+  torch_dtype: bf16
+  device_map: auto
+  attn_implementation: sdpa
+  low_cpu_mem_usage: true
+  cache_dir: null
+  temperature: 0.0
+  max_cot_output_tokens: 1024
+  max_retries: 2
+  retry_sleep_seconds: 2
+  use_audio_in_video: false
+  disable_talker: true
+  return_audio: false
+task:
+  name: MERC_REASON_IEMOCAP
+  labels:
+  - Neutral
+  - Anger
+  - Frustration
+  - Happiness
+  - Excited
+  - Sadness
+  - Fear
+paths:
+  result_dir: result
+subsample:
+  n_samples: 100
+  random_seed: 42
+  stratify_emotion_gender: true
+eval:
+  modalities:
+  - audio
+  speaker_mode: none
+  log_every_n: 5
+  video_fps: 1.0
+  video_max_pixels: 100352
+  video_max_frames: 16

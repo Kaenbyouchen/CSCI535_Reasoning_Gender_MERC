@@ -98,17 +98,25 @@ def _parse_json_loose(s: str) -> Optional[dict]:
 
 
 def run_openai(system: str, user: str, model: str, api_key: str, max_tok: int) -> str:
-    from openai import OpenAI
+    from openai import BadRequestError, OpenAI
     client = OpenAI(api_key=api_key)
-    r = client.chat.completions.create(
-        model=model,
-        messages=[
-            {"role": "system", "content": system},
-            {"role": "user", "content": user},
-        ],
-        temperature=0.0,
-        max_tokens=max_tok,
-    )
+    messages = [
+        {"role": "system", "content": system},
+        {"role": "user", "content": user},
+    ]
+    # Newer API models require max_completion_tokens; older ones may only accept max_tokens
+    try:
+        r = client.chat.completions.create(
+            model=model, messages=messages, temperature=0.0, max_completion_tokens=max_tok,
+        )
+    except BadRequestError as e:
+        em = str(e).lower()
+        if "max_completion_tokens" in em and "unsupported" in em:
+            r = client.chat.completions.create(
+                model=model, messages=messages, temperature=0.0, max_tokens=max_tok,
+            )
+        else:
+            raise
     return (r.choices[0].message.content or "").strip()
 
 

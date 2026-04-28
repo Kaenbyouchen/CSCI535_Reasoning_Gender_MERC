@@ -75,7 +75,7 @@ prompt:
   # Task framing only — do not add “debias” instructions here, or you are no longer measuring unprompted reasoning.
   system_cot: |
     You are an expert in Multimodal Emotion Recognition in Conversation (MERC).
-    You will be given the target utterance in whatever modalities are available (text and/or audio and/or video of that utterance). Use only what the user provides for that target.
+    You will be given the target utterance in modalities are available (text and/or audio and/or video of that utterance). Use only what the user provides for that target.
 
     Think step by step. Your answer MUST use these section headers, in this order. If a section does not apply, write a single short line such as "Not provided."
     ### 1) Text

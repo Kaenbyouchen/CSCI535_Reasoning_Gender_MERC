@@ -93,6 +93,21 @@ def _build_user_text(
     })
 
 
+def _chat_template_string(raw) -> str:
+    """apply_chat_template(..., tokenize=False) may return str or list (processor version)."""
+    if raw is None:
+        return ""
+    if isinstance(raw, str):
+        return raw
+    if isinstance(raw, (list, tuple)):
+        if not raw:
+            return ""
+        if all(isinstance(x, str) for x in raw):
+            return "".join(raw)
+        return "".join(str(x) for x in raw)
+    return str(raw)
+
+
 def _build_forced_assistant_suffix(utterance: str) -> str:
     """Minimal stub so model predicts the JSON emotion; keeps ### 1–4 structure."""
     u = (utterance or "").strip()
@@ -268,7 +283,9 @@ def main() -> None:
             {"role": "user", "content": user_content},
         ]
 
-        t_in = qproc.apply_chat_template(convo, add_generation_prompt=True, tokenize=False)
+        t_in = _chat_template_string(
+            qproc.apply_chat_template(convo, add_generation_prompt=True, tokenize=False)
+        )
         if not t_in or not t_in.strip():
             print(f"[{idx}] skip: empty template", file=sys.stderr)
             continue

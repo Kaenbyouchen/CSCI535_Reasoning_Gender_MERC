@@ -279,6 +279,123 @@ def _minimal_assistant_suffix() -> str:
     return '\n{"emotion": "'
 
 
+def _utterance_char_spans_in_tin(t_in: str, utterance: str) -> list[tuple[int, int]]:
+    """[start, end) ranges where ``utterance`` occurs in ``t_in`` (char indices into ``t_in``)."""
+    u = utterance or ""
+    if not u:
+        return []
+    spans: list[tuple[int, int]] = []
+    start = 0
+    while True:
+        i = t_in.find(u, start)
+        if i < 0:
+            break
+        spans.append((i, i + len(u)))
+        start = i + 1
+    return spans
+
+
+def _offset_pairs_from_encoding(enc, *, expected_len: int) -> list[tuple[int, int]] | None:
+    """Match ``analysis/plot_text_attribution_topk.py`` — Qwen offset layouts differ."""
+    om_raw = enc.get("offset_mapping")
+    if om_raw is None:
+        return None
+    if hasattr(om_raw, "tolist"):
+        om_raw = om_raw.tolist()
+    if not isinstance(om_raw, (list, tuple)) or not om_raw:
+        return None
+
+    def _each_is_pair_row(seq: list) -> bool:
+        return bool(seq) and all(
+            isinstance(x, (list, tuple))
+            and len(x) == 2
+            and all(isinstance(t, int) for t in x)
+            for x in seq
+        )
+
+    L = int(expected_len)
+    cands: list[list] = []
+    if _each_is_pair_row(list(om_raw)):
+        cands.append(list(om_raw))
+    if isinstance(om_raw[0], (list, tuple)) and _each_is_pair_row(list(om_raw[0])):
+        cands.append(om_raw[0])
+
+    for seq in cands:
+        if not seq:
+            continue
+        if isinstance(seq[0], int):
+            if len(seq) != 2 * L:
+                continue
+            return [(int(seq[i]), int(seq[i + 1])) for i in range(0, len(seq), 2)]
+        om: list[tuple[int, int]] = []
+        bad = False
+        for it in seq:
+            if isinstance(it, (list, tuple)) and len(it) >= 2:
+                om.append((int(it[0]), int(it[1])))
+            elif hasattr(it, "tolist"):
+                t = it.tolist()
+                if isinstance(t, (list, tuple)) and len(t) >= 2:
+                    om.append((int(t[0]), int(t[1])))
+                else:
+                    bad = True
+                    break
+            else:
+                bad = True
+                break
+        if not bad and len(om) == L:
+            return om
+    return None
+
+
+def _token_indices_overlapping_spans(
+    offset_row: list[tuple[int, int]],
+    spans: list[tuple[int, int]],
+    *,
+    clip_end: int,
+) -> frozenset[int]:
+    kept: set[int] = set()
+    for i, (a, b) in enumerate(offset_row):
+        if a >= clip_end or b <= a:
+            continue
+        for s, e in spans:
+            if a < e and b > s:
+                kept.add(i)
+                break
+    return frozenset(kept)
+
+
+def _minimal_utterance_token_indices(qproc, t_in: str, suff: str, utt: str) -> frozenset[int] | None:
+    """Token positions whose char offsets overlap ``utt`` inside ``t_in``; None if offsets unavailable."""
+    full = t_in + suff
+    tok = qproc.tokenizer
+    try:
+        enc = tok(full, add_special_tokens=True, return_offsets_mapping=True)
+    except (TypeError, ValueError):
+        return None
+    ids = enc["input_ids"]
+    if hasattr(ids, "tolist") and callable(getattr(ids, "tolist", None)):
+        raw = ids.tolist()
+        if raw and isinstance(raw[0], list):
+            ids_list = [int(x) for x in raw[0]]
+        else:
+            ids_list = [int(x) for x in raw]
+    elif isinstance(ids, (list, tuple)):
+        if ids and isinstance(ids[0], (list, tuple)):
+            ids_list = [int(x) for x in ids[0]]
+        else:
+            ids_list = [int(x) for x in ids]
+    else:
+        ids_list = [int(x) for x in ids[0]]
+    L = len(ids_list)
+    om = _offset_pairs_from_encoding(enc, expected_len=L)
+    if om is None:
+        return None
+    spans = _utterance_char_spans_in_tin(t_in, utt)
+    if not spans:
+        return frozenset()
+    return _token_indices_overlapping_spans(om, spans, clip_end=len(t_in))
+
+
 def _forward_loss_gradient(
     qm,
     qproc,
@@ -381,7 +498,14 @@ def main() -> None:
         action="store_true",
         help="Prompt = short system + user text equal to dataset utterance only; forced suffix = "
         "newline + {\"emotion\": \" (no CoT sections, no gender/gold/speaker template). "
-        "Label list comes from yaml task.labels.",
+        "Label list comes from yaml task.labels. By default, per_sample CSV rows are **only** "
+        "tokens whose tokenizer offsets overlap the utterance substring inside t_in (not <|im_start|> "
+        "etc.); use --minimal-export-all-tokens to dump the full sequence.",
+    )
+    ap.add_argument(
+        "--minimal-export-all-tokens",
+        action="store_true",
+        help="With --minimal-utterance-only, write all positions to per_sample CSV (default: utterance-overlap only).",
     )
     args = ap.parse_args()
     os.chdir(_ROOT)
@@ -450,7 +574,16 @@ def main() -> None:
     per_sample_path = out_dir / "per_sample"
     print(f"Output -> {out_dir}")
     if args.minimal_utterance_only:
-        print("Mode: --minimal-utterance-only (short system + utterance user + JSON stub suffix)", flush=True)
+        print(
+            "Mode: --minimal-utterance-only (short system + utterance user + JSON stub suffix)",
+            flush=True,
+        )
+        if not args.minimal_export_all_tokens:
+            print(
+                "  per_sample CSV: only tokens overlapping dataset utterance in t_in "
+                "(not chat control tokens). Pass --minimal-export-all-tokens for every row.",
+                flush=True,
+            )
 
     rows = []
     with p_jsonl.open(encoding="utf-8") as f:
@@ -545,6 +678,20 @@ def main() -> None:
         sal_list = [float(sal[i].item()) for i in range(L)]
         if len(tks) < L:
             tks = tks + [""] * (L - len(tks))
+        utter_mask: frozenset[int] | None = None
+        if args.minimal_utterance_only and (not args.minimal_export_all_tokens):
+            utter_mask = _minimal_utterance_token_indices(qproc, t_in, suff, utt)
+            if utter_mask is not None and len(utter_mask) == 0:
+                print(
+                    f"[{idx}] WARN: utterance not found as substring of t_in; exporting all in_prompt rows",
+                    file=sys.stderr,
+                )
+                utter_mask = None
+            elif utter_mask is None:
+                print(
+                    f"[{idx}] WARN: could not build utterance/offset mask; exporting all in_prompt rows",
+                    file=sys.stderr,
+                )
         in_s = 0.0
         in_g = 0.0
         n_pr = 0
@@ -556,12 +703,14 @@ def main() -> None:
                 ("token_index", "token", "saliency", "in_prompt", "is_gender_lexicon",),
             )
             for i in range(L):
+                if utter_mask is not None and i not in utter_mask:
+                    continue
                 tk = tks[i] if i < len(tks) else ""
                 s = float(sal[i].item()) if i < len(sal_list) else 0.0
                 in_p = float(pmask[i].item()) if i < len(pmask) else 0.0
                 gflag = 1.0 if _is_gender_token(tk) else 0.0
                 w.writerow((i, tk, s, in_p, gflag))
-                if in_p > 0.5:
+                if in_p > 0.5 and (utter_mask is None or i in utter_mask):
                     in_s += s
                     n_pr += 1
                     if gflag > 0.5:

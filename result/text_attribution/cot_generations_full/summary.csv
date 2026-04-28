@@ -1,0 +1,4 @@
+index,dialogue_id,utterance_id,dataset,gold_emotion,nll,in_prompt_sal_sum,in_prompt_sal_gender,frac_sal_in_gender,n_prompt_tokens,n_gender_in_prompt,error
+1,51,1,MELD,Joy,,,,,,,NotImplementedError: (no message) NotImplementedError()
+2,170,1,MELD,Surprise,,,,,,,NotImplementedError: (no message) NotImplementedError()
+MEAN(OK),,,,,nan,—,—,nan,—,—,n_ok=0/n=2

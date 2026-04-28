@@ -13,6 +13,10 @@ Output:
 Loss:  -log p(first BPE of gold emotion | context), where context = chat_template string + a short
         forced "assistant" stub ending at ### 4) Final {"emotion": "  (same for MELD & IEMOCAP).
 
+Gradient:  Uses input_ids forward (not inputs_embeds). Qwen2.5-Omni raises NotImplementedError on
+        inputs_embeds backward; we temporarily enable grad on the embedding weight and read
+        ∂L/∂embedding_output via a hook on the embedding layer output (same saliency as grad*input).
+
   python reasoning/text_input_attribution.py \\
     --cot-jsonl result/.../cot_generations.jsonl --config yaml/qwen25_MELD_reasoning.yaml
 """
@@ -133,6 +137,7 @@ def _forward_loss(
         full, return_tensors="pt", return_offsets_mapping=True, add_special_tokens=True,
     )
     input_ids = toks["input_ids"].to(dev)
+    attn = toks["attention_mask"].to(dev)
     off = toks.get("offset_mapping")
     if off is not None:
         off = off[0]  # (L,2)
@@ -142,30 +147,61 @@ def _forward_loss(
     split = len(t_in)
 
     emb_w = qm.get_input_embeddings()
-    emb = emb_w(input_ids).to(torch.float32)
-    emb.requires_grad_(True)
+    saved_emb: list[torch.Tensor] = []
+    saved_grad: list[torch.Tensor] = []
+    emb_out: torch.Tensor | None = None
 
-    with torch.set_grad_enabled(True):
-        fwd_kw = {
-            "inputs_embeds": emb, "attention_mask": toks["attention_mask"].to(dev),
-            "use_cache": False, "return_dict": True,
-        }
-        try:
-            out = qm(**fwd_kw, use_audio_in_video=use_aiv)
-        except TypeError:
-            out = qm(**fwd_kw)
-        logits = out.logits[0, -1, :]
-        g = (gold_emotion or "").strip()
-        ids_emo = qproc.tokenizer.encode(g, add_special_tokens=False)
-        if not ids_emo:
-            raise ValueError("empty gold emotion id")
-        tid0 = int(ids_emo[0])
-        nll = -F.log_softmax(logits, dim=0)[tid0]
-        nll.backward()
-        if emb.grad is None:
-            raise RuntimeError("Embedding grad is None after backward (model may not support inputs_embeds grad).")
-        grad = emb.grad[0]  # (L, h)
-    sal = (grad * emb.detach()[0]).sum(dim=-1).abs()  # (L,)
+    def _fwd_hook(_mod, _inp, out):
+        # If the hook runs more than once, keep the last capture (should be rare).
+        saved_emb[:] = [out]
+
+    h_fwd = emb_w.register_forward_hook(_fwd_hook)
+    was_req = emb_w.weight.requires_grad
+    emb_w.weight.requires_grad_(True)
+    th = None
+    try:
+        with torch.set_grad_enabled(True):
+            fwd_kw = {
+                "input_ids": input_ids,
+                "attention_mask": attn,
+                "use_cache": False,
+                "return_dict": True,
+            }
+            try:
+                out = qm(**fwd_kw, use_audio_in_video=use_aiv)
+            except TypeError:
+                out = qm(**fwd_kw)
+            logits = out.logits[0, -1, :]
+            g = (gold_emotion or "").strip()
+            ids_emo = qproc.tokenizer.encode(g, add_special_tokens=False)
+            if not ids_emo:
+                raise ValueError("empty gold emotion id")
+            tid0 = int(ids_emo[0])
+            nll = -F.log_softmax(logits.float(), dim=0)[tid0]
+            if not saved_emb:
+                raise RuntimeError("Forward hook did not capture embedding output.")
+            emb_out = saved_emb[0]
+            if not emb_out.requires_grad:
+                raise RuntimeError("Embedding output has requires_grad=False; cannot attribute.")
+            th = emb_out.register_hook(lambda gr: saved_grad.append(gr))
+            try:
+                nll.backward()
+            finally:
+                if th is not None:
+                    th.remove()
+                    th = None
+    finally:
+        h_fwd.remove()
+        emb_w.weight.requires_grad_(was_req)
+        if emb_w.weight.grad is not None:
+            emb_w.weight.grad = None
+
+    if not saved_grad:
+        raise RuntimeError("Embedding output grad hook did not run (backward may be unsupported on this path).")
+    assert emb_out is not None
+    grad = saved_grad[0][0]  # (L, h)
+    emb = emb_out.detach()[0].float()
+    sal = (grad.float() * emb).sum(dim=-1).abs()  # (L,)
     L = int(sal.shape[0])
     pmask = []
     for i in range(L):

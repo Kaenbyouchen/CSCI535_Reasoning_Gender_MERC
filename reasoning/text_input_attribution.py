@@ -11,7 +11,9 @@ Output:
   <out_dir>/summary.csv                          — one row per sample + aggregate row
 
 Loss:  -log p(first BPE of gold emotion | context), where context = chat_template string + a short
-        forced "assistant" stub ending at ### 4) Final {"emotion": "  (same for MELD & IEMOCAP).
+        forced assistant stub ending right before the first emotion subword (default: CoT stub
+        ending at ``### 4) Final {"emotion": "``; with ``--minimal-utterance-only``: stub is only
+        ``\\n{"emotion": "`` and the user message is the raw utterance text only).
 
 Gradient (preferred): input_ids forward + embedding output hook + grad×embedding (same idea as
         grad×input). Qwen2.5-Omni often still raises NotImplementedError during full backward.
@@ -24,6 +26,12 @@ Forward target:  For Qwen2.5-Omni, always call ``model.thinker`` for logits (the
 
   python reasoning/text_input_attribution.py \\
     --cot-jsonl result/.../cot_generations.jsonl --config yaml/qwen25_MELD_reasoning.yaml
+
+  Minimal prompt (dataset text + JSON emotion head only; no CoT / no metadata template):
+
+  python reasoning/text_input_attribution.py \\
+    --cot-jsonl result/.../cot_generations.jsonl --config yaml/qwen25_MELD_reasoning.yaml \\
+    --minimal-utterance-only
 """
 from __future__ import annotations
 
@@ -43,12 +51,7 @@ _ROOT = Path(__file__).resolve().parents[1]
 if str(_ROOT) not in sys.path:
     sys.path.insert(0, str(_ROOT))
 
-_gender_words = frozenset({
-    "he", "she", "her", "his", "him", "man", "men", "woman", "women", "boy", "girl", "male", "female",
-    "guy", "guys", "girls", "boys", "husband", "wife", "mother", "father", "son", "daughter", "sister", "brother",
-    "gender", "sex", "feminine", "masculine", "lady", "ladies", "gentleman", "mom", "dad", "girly",
-    "target", "conversion", "counterfactual", "trans", "queer", "mr", "mrs", "ms", "sir", "madam",
-})
+from reasoning.gender_lexicon import is_gender_token as _is_gender_token  # noqa: E402
 
 
 def _mcf():
@@ -63,19 +66,6 @@ mcf = _mcf()
 read_yaml = mcf.read_yaml
 render_template = mcf.render_template
 normalize_emotion = mcf.normalize_emotion
-
-
-def _is_gender_token(s: str) -> bool:
-    t = s.replace("Ġ", "").replace("▁", "").strip().lower()
-    t = re.sub(r"^[^\w]+|[^\w]+$", "", t)
-    if not t:
-        return False
-    if t in _gender_words:
-        return True
-    for g in _gender_words:
-        if g in t and len(t) <= max(len(g) + 2, 6):
-            return True
-    return False
 
 
 def _build_user_text(
@@ -265,7 +255,7 @@ def _forward_loss_occlusion(
 
 
 def _build_forced_assistant_suffix(utterance: str) -> str:
-    """Minimal stub so model predicts the JSON emotion; keeps ### 1–4 structure."""
+    """CoT-style stub so logits at last position target the JSON emotion line (includes utterance again)."""
     u = (utterance or "").strip()
     return (
         f"\n### 1) Text\n{u}\n\n"
@@ -273,6 +263,20 @@ def _build_forced_assistant_suffix(utterance: str) -> str:
         "### 3) Integrate\nN/A\n\n"
         '### 4) Final\n{"emotion": "'
     )
+
+
+def _minimal_system_prompt(labels: list[str]) -> str:
+    lab = ", ".join(str(x) for x in labels)
+    return (
+        "You are an emotion classifier. The user message is the transcript of a single utterance only.\n"
+        f'Respond with exactly one line of JSON and no other text. Schema: {{"emotion":"<label>"}} '
+        f"where <label> must be exactly one of: {lab}."
+    )
+
+
+def _minimal_assistant_suffix() -> str:
+    """Forced start of assistant JSON (utterance appears only in the user turn, not repeated here)."""
+    return '\n{"emotion": "'
 
 
 def _forward_loss_gradient(
@@ -372,6 +376,13 @@ def main() -> None:
         action="store_true",
         help="If gradient attribution fails, abort instead of leave-one-token occlusion",
     )
+    ap.add_argument(
+        "--minimal-utterance-only",
+        action="store_true",
+        help="Prompt = short system + user text equal to dataset utterance only; forced suffix = "
+        "newline + {\"emotion\": \" (no CoT sections, no gender/gold/speaker template). "
+        "Label list comes from yaml task.labels.",
+    )
     args = ap.parse_args()
     os.chdir(_ROOT)
     device = torch.device(args.device)
@@ -427,7 +438,10 @@ def main() -> None:
         p.requires_grad = False
 
     stem = p_jsonl.stem
-    abtag = "ablate" if args.ablate_gender_meta else "full"
+    if args.minimal_utterance_only:
+        abtag = "minimal_utt"
+    else:
+        abtag = "ablate" if args.ablate_gender_meta else "full"
     out_dir = args.out_dir
     if out_dir is None:
         out_dir = _ROOT / "result" / "text_attribution" / f"{stem}_{abtag}"
@@ -435,6 +449,8 @@ def main() -> None:
     (out_dir / "per_sample").mkdir(parents=True, exist_ok=True)
     per_sample_path = out_dir / "per_sample"
     print(f"Output -> {out_dir}")
+    if args.minimal_utterance_only:
+        print("Mode: --minimal-utterance-only (short system + utterance user + JSON stub suffix)", flush=True)
 
     rows = []
     with p_jsonl.open(encoding="utf-8") as f:
@@ -458,13 +474,29 @@ def main() -> None:
         u_id = str(rec.get("utterance_id", "")).strip()
         utt = str(rec.get("utterance", "")).strip()
 
-        user_text = _build_user_text(rec, user_tmpl, ablate_gender=bool(args.ablate_gender_meta))
-        user_content = [{"type": "text", "text": user_text}]
-        sc = system_cot_iemo if is_iemo else system_cot
-        convo = [
-            {"role": "system", "content": [{"type": "text", "text": sc}]},
-            {"role": "user", "content": user_content},
-        ]
+        if args.minimal_utterance_only:
+            if not utt:
+                print(f"[{idx}] skip: empty utterance", file=sys.stderr)
+                continue
+            cfg_lab = cfg_meld if (not is_iemo or args.one_config) else cfg_iemo
+            labels = (cfg_lab.get("task") or {}).get("labels") or [
+                "Anger", "Disgust", "Sadness", "Joy", "Neutral", "Surprise", "Fear",
+            ]
+            sy = _minimal_system_prompt(list(labels))
+            convo = [
+                {"role": "system", "content": [{"type": "text", "text": sy}]},
+                {"role": "user", "content": [{"type": "text", "text": utt}]},
+            ]
+            suff = _minimal_assistant_suffix()
+        else:
+            user_text = _build_user_text(rec, user_tmpl, ablate_gender=bool(args.ablate_gender_meta))
+            user_content = [{"type": "text", "text": user_text}]
+            sc = system_cot_iemo if is_iemo else system_cot
+            convo = [
+                {"role": "system", "content": [{"type": "text", "text": sc}]},
+                {"role": "user", "content": user_content},
+            ]
+            suff = _build_forced_assistant_suffix(utt)
 
         t_in = _chat_template_string(
             qproc.apply_chat_template(convo, add_generation_prompt=True, tokenize=False)
@@ -472,7 +504,6 @@ def main() -> None:
         if not t_in or not t_in.strip():
             print(f"[{idx}] skip: empty template", file=sys.stderr)
             continue
-        suff = _build_forced_assistant_suffix(utt)
         attrib_method = ""
         try:
             nll, sal, pmask, _tid0 = _forward_loss_gradient(qm, qproc, t_in, suff, gold, use_aiv)
@@ -485,6 +516,7 @@ def main() -> None:
                     "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
                     "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
                     "n_prompt_tokens": "", "n_gender_in_prompt": "", "attrib_method": "",
+                    "prompt_mode": "minimal_utt" if args.minimal_utterance_only else "cot",
                     "error": err_msg[:500],
                 })
                 continue
@@ -502,6 +534,7 @@ def main() -> None:
                     "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
                     "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
                     "n_prompt_tokens": "", "n_gender_in_prompt": "", "attrib_method": "",
+                    "prompt_mode": "minimal_utt" if args.minimal_utterance_only else "cot",
                     "error": err_msg[:500],
                 })
                 continue
@@ -541,6 +574,7 @@ def main() -> None:
             "nll": float(nll.item()), "in_prompt_sal_sum": in_s, "in_prompt_sal_gender": in_g,
             "frac_sal_in_gender": float(frac), "n_prompt_tokens": n_pr, "n_gender_in_prompt": n_gm,
             "attrib_method": attrib_method,
+            "prompt_mode": "minimal_utt" if args.minimal_utterance_only else "cot",
             "error": "OK",
         })
         if idx % 10 == 0:
@@ -566,7 +600,7 @@ def main() -> None:
         fields = list(all_summ[0].keys()) if all_summ else [
             "index", "dialogue_id", "utterance_id", "dataset", "gold_emotion", "nll",
             "in_prompt_sal_sum", "in_prompt_sal_gender", "frac_sal_in_gender",
-            "n_prompt_tokens", "n_gender_in_prompt", "attrib_method", "error",
+            "n_prompt_tokens", "n_gender_in_prompt", "attrib_method", "prompt_mode", "error",
         ]
         w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
         w.writeheader()
@@ -576,6 +610,7 @@ def main() -> None:
                     "index": "MEAN(OK)", "nll": m_nll, "frac_sal_in_gender": m_frac,
                     "in_prompt_sal_sum": "—", "in_prompt_sal_gender": "—", "n_prompt_tokens": "—",
                     "n_gender_in_prompt": "—", "attrib_method": "—",
+                    "prompt_mode": "minimal_utt" if args.minimal_utterance_only else "cot",
                     "error": f"n_ok={len(ok)}/n={len(all_summ)}"})
     n_ok = sum(1 for r in all_summ if r.get("error") == "OK")
     print(f"Wrote {summary_path}; per_sample CSVs with data: {n_ok}/{len(all_summ)} -> {per_sample_path}")

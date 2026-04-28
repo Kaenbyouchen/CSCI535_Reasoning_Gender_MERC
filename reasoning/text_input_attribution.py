@@ -13,9 +13,11 @@ Output:
 Loss:  -log p(first BPE of gold emotion | context), where context = chat_template string + a short
         forced "assistant" stub ending at ### 4) Final {"emotion": "  (same for MELD & IEMOCAP).
 
-Gradient:  Uses input_ids forward (not inputs_embeds). Qwen2.5-Omni raises NotImplementedError on
-        inputs_embeds backward; we temporarily enable grad on the embedding weight and read
-        ∂L/∂embedding_output via a hook on the embedding layer output (same saliency as grad*input).
+Gradient (preferred): input_ids forward + embedding output hook + grad×embedding (same idea as
+        grad×input). Qwen2.5-Omni often still raises NotImplementedError during full backward.
+
+Fallback: leave-one-token occlusion — replace each in-prompt token with a mask id, |Δ NLL| vs baseline
+        (no autograd). Use --no-occlusion-fallback to disable and surface errors instead.
 
   python reasoning/text_input_attribution.py \\
     --cot-jsonl result/.../cot_generations.jsonl --config yaml/qwen25_MELD_reasoning.yaml
@@ -112,6 +114,110 @@ def _chat_template_string(raw) -> str:
     return str(raw)
 
 
+def _resolve_mask_token_id(tok) -> int:
+    for mid in (tok.mask_token_id, tok.unk_token_id, tok.pad_token_id):
+        if mid is not None and int(mid) >= 0:
+            return int(mid)
+    ids = tok.encode(".", add_special_tokens=False)
+    if ids:
+        return int(ids[0])
+    return 0
+
+
+def _compute_nll(
+    qm,
+    qproc,
+    input_ids: torch.Tensor,
+    attn: torch.Tensor,
+    gold_emotion: str,
+    use_aiv: bool,
+    tid0: int | None = None,
+) -> tuple[torch.Tensor, int]:
+    """Single forward, no grad. Returns (nll scalar tensor, first subword id of gold emotion)."""
+    with torch.no_grad():
+        fwd_kw = {
+            "input_ids": input_ids,
+            "attention_mask": attn,
+            "use_cache": False,
+            "return_dict": True,
+        }
+        try:
+            out = qm(**fwd_kw, use_audio_in_video=use_aiv)
+        except TypeError:
+            out = qm(**fwd_kw)
+        logits = out.logits[0, -1, :]
+        if tid0 is None:
+            g = (gold_emotion or "").strip()
+            ids_emo = qproc.tokenizer.encode(g, add_special_tokens=False)
+            if not ids_emo:
+                raise ValueError("empty gold emotion id")
+            tid0 = int(ids_emo[0])
+        nll = -F.log_softmax(logits.float(), dim=0)[tid0]
+    return nll, tid0
+
+
+def _pmask_tensor(off, split: int, L: int, ref: torch.Tensor) -> torch.Tensor:
+    pmask: list[float] = []
+    for i in range(L):
+        if off is not None and i < len(off):
+            a, _b = int(off[i][0]), int(off[i][1])
+            in_prompt = 1.0 if a < split else 0.0
+        else:
+            in_prompt = 1.0
+        pmask.append(in_prompt)
+    return ref.new_tensor(pmask)
+
+
+def _attrib_fallback_ok(e: BaseException) -> bool:
+    if isinstance(e, NotImplementedError):
+        return True
+    if isinstance(e, RuntimeError):
+        m = str(e)
+        return (
+            "Embedding output grad hook did not run" in m
+            or "cannot attribute" in m.lower()
+        )
+    return False
+
+
+def _forward_loss_occlusion(
+    qm,
+    qproc,
+    t_in: str,
+    suffix: str,
+    gold_emotion: str,
+    use_aiv: bool,
+) -> tuple[torch.Tensor, torch.Tensor, torch.Tensor, int]:
+    """|Δ NLL| when each in-prompt token is replaced by mask id (no backward)."""
+    dev = next(qm.parameters()).device
+    full = t_in + suffix
+    toks = qproc.tokenizer(
+        full, return_tensors="pt", return_offsets_mapping=True, add_special_tokens=True,
+    )
+    input_ids = toks["input_ids"].to(dev)
+    attn = toks["attention_mask"].to(dev)
+    off = toks.get("offset_mapping")
+    off = off[0] if off is not None else None
+    split = len(t_in)
+    L = int(input_ids.shape[1])
+    nll_base, tid0 = _compute_nll(qm, qproc, input_ids, attn, gold_emotion, use_aiv, tid0=None)
+    mask_id = _resolve_mask_token_id(qproc.tokenizer)
+    sal = torch.zeros(L, device=dev, dtype=torch.float32)
+    for i in range(L):
+        if off is not None and i < len(off):
+            a, _b = int(off[i][0]), int(off[i][1])
+            if a >= split:
+                continue
+        ids2 = input_ids.clone()
+        if int(ids2[0, i].item()) == mask_id:
+            continue
+        ids2[0, i] = mask_id
+        nll_i, _ = _compute_nll(qm, qproc, ids2, attn, gold_emotion, use_aiv, tid0=tid0)
+        sal[i] = (nll_i - nll_base).abs()
+    pmask_t = _pmask_tensor(off, split, L, sal)
+    return nll_base.detach(), sal.detach(), pmask_t, tid0
+
+
 def _build_forced_assistant_suffix(utterance: str) -> str:
     """Minimal stub so model predicts the JSON emotion; keeps ### 1–4 structure."""
     u = (utterance or "").strip()
@@ -123,7 +229,7 @@ def _build_forced_assistant_suffix(utterance: str) -> str:
     )
 
 
-def _forward_loss(
+def _forward_loss_gradient(
     qm,
     qproc,
     t_in: str,
@@ -203,15 +309,7 @@ def _forward_loss(
     emb = emb_out.detach()[0].float()
     sal = (grad.float() * emb).sum(dim=-1).abs()  # (L,)
     L = int(sal.shape[0])
-    pmask = []
-    for i in range(L):
-        if off is not None and i < len(off):
-            a, _b = int(off[i][0]), int(off[i][1])
-            in_prompt = 1.0 if a < split else 0.0
-        else:
-            in_prompt = 1.0
-        pmask.append(in_prompt)
-    pmask_t = sal.new_tensor(pmask)
+    pmask_t = _pmask_tensor(off, split, L, sal)
     return nll.detach(), sal.detach(), pmask_t, tid0
 
 
@@ -228,6 +326,11 @@ def main() -> None:
     ap.add_argument("--config-iemocap", type=Path, default=Path("yaml/qwen25_IEMOCAP_reasoning.yaml"),
                     help="If set, use for lines with dataset=IEMOCAP when not using --one-config")
     ap.add_argument("--one-config", action="store_true", help="Use only --config for all (ignore IEMOCAP template)")
+    ap.add_argument(
+        "--no-occlusion-fallback",
+        action="store_true",
+        help="If gradient attribution fails, abort instead of leave-one-token occlusion",
+    )
     args = ap.parse_args()
     os.chdir(_ROOT)
     device = torch.device(args.device)
@@ -329,17 +432,38 @@ def main() -> None:
             print(f"[{idx}] skip: empty template", file=sys.stderr)
             continue
         suff = _build_forced_assistant_suffix(utt)
+        attrib_method = ""
         try:
-            nll, sal, pmask, _tid0 = _forward_loss(qm, qproc, t_in, suff, gold, use_aiv)
+            nll, sal, pmask, _tid0 = _forward_loss_gradient(qm, qproc, t_in, suff, gold, use_aiv)
+            attrib_method = "grad"
         except Exception as e:
-            err_msg = f"{type(e).__name__}: {e!s}" if str(e) else f"{type(e).__name__}: (no message) {e!r}"
-            print(f"[{idx}] {d_id}/{u_id} err: {err_msg}", file=sys.stderr)
-            all_summ.append({
-                "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
-                "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
-                "n_prompt_tokens": "", "n_gender_in_prompt": "", "error": err_msg[:500],
-            })
-            continue
+            if args.no_occlusion_fallback or not _attrib_fallback_ok(e):
+                err_msg = f"{type(e).__name__}: {e!s}" if str(e) else f"{type(e).__name__}: (no message) {e!r}"
+                print(f"[{idx}] {d_id}/{u_id} err: {err_msg}", file=sys.stderr)
+                all_summ.append({
+                    "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
+                    "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
+                    "n_prompt_tokens": "", "n_gender_in_prompt": "", "attrib_method": "",
+                    "error": err_msg[:500],
+                })
+                continue
+            print(
+                f"[{idx}] {d_id}/{u_id} grad failed ({type(e).__name__}); using occlusion",
+                file=sys.stderr,
+            )
+            try:
+                nll, sal, pmask, _tid0 = _forward_loss_occlusion(qm, qproc, t_in, suff, gold, use_aiv)
+                attrib_method = "occlusion"
+            except Exception as e2:
+                err_msg = f"{type(e2).__name__}: {e2!s}" if str(e2) else f"{type(e2).__name__}: (no message) {e2!r}"
+                print(f"[{idx}] {d_id}/{u_id} err: {err_msg}", file=sys.stderr)
+                all_summ.append({
+                    "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
+                    "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
+                    "n_prompt_tokens": "", "n_gender_in_prompt": "", "attrib_method": "",
+                    "error": err_msg[:500],
+                })
+                continue
         toks = qproc.tokenizer(t_in + suff, return_tensors="pt", return_offset_mapping=True, add_special_tokens=True)
         input_ids = toks["input_ids"][0]
         tks = qproc.tokenizer.convert_ids_to_tokens(input_ids)
@@ -375,6 +499,7 @@ def main() -> None:
             "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
             "nll": float(nll.item()), "in_prompt_sal_sum": in_s, "in_prompt_sal_gender": in_g,
             "frac_sal_in_gender": float(frac), "n_prompt_tokens": n_pr, "n_gender_in_prompt": n_gm,
+            "attrib_method": attrib_method,
             "error": "OK",
         })
         if idx % 10 == 0:
@@ -400,7 +525,7 @@ def main() -> None:
         fields = list(all_summ[0].keys()) if all_summ else [
             "index", "dialogue_id", "utterance_id", "dataset", "gold_emotion", "nll",
             "in_prompt_sal_sum", "in_prompt_sal_gender", "frac_sal_in_gender",
-            "n_prompt_tokens", "n_gender_in_prompt", "error",
+            "n_prompt_tokens", "n_gender_in_prompt", "attrib_method", "error",
         ]
         w = csv.DictWriter(f, fieldnames=fields, extrasaction="ignore")
         w.writeheader()
@@ -408,8 +533,11 @@ def main() -> None:
             w.writerow(r)
         w.writerow({**{k: "" for k in fields},
                     "index": "MEAN(OK)", "nll": m_nll, "frac_sal_in_gender": m_frac,
-                    "in_prompt_sal_sum": "—", "in_prompt_sal_gender": "—", "n_prompt_tokens": "—", "n_gender_in_prompt": "—", "error": f"n_ok={len(ok)}/n={len(all_summ)}"})
-    print(f"Wrote {summary_path} and {len(all_summ)} per_sample CSVs under {per_sample_path}")
+                    "in_prompt_sal_sum": "—", "in_prompt_sal_gender": "—", "n_prompt_tokens": "—",
+                    "n_gender_in_prompt": "—", "attrib_method": "—",
+                    "error": f"n_ok={len(ok)}/n={len(all_summ)}"})
+    n_ok = sum(1 for r in all_summ if r.get("error") == "OK")
+    print(f"Wrote {summary_path}; per_sample CSVs with data: {n_ok}/{len(all_summ)} -> {per_sample_path}")
 
 
 if __name__ == "__main__":

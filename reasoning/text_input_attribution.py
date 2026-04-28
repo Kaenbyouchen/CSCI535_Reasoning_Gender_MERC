@@ -128,6 +128,56 @@ def _omni_text_lm(qm: torch.nn.Module) -> torch.nn.Module:
     return t if t is not None else qm
 
 
+def _tokenizer_batch(qproc, full: str, *, try_offsets: bool):
+    """Encode `full` to tensors. Many fast tokenizers (incl. Qwen2.5-Omni) reject ``return_offsets_mapping``."""
+    tok = qproc.tokenizer
+    base = {"return_tensors": "pt", "add_special_tokens": True}
+    off0 = None
+    if try_offsets:
+        try:
+            batch = tok(full, return_offsets_mapping=True, **base)
+            om = batch.get("offset_mapping")
+            if om is not None:
+                off0 = om[0]
+            return batch, off0
+        except (TypeError, ValueError):
+            pass
+    batch = tok(full, **base)
+    return batch, off0
+
+
+def _in_prompt_mask(
+    qproc,
+    t_in: str,
+    full: str,
+    L: int,
+    off_row,
+    ref: torch.Tensor,
+) -> torch.Tensor:
+    """Per-token mask: 1 = chat prompt (before forced suffix), 0 = forced assistant stub."""
+    split = len(t_in)
+    if off_row is not None:
+        pmask: list[float] = []
+        for i in range(L):
+            if i < len(off_row):
+                a, _b = int(off_row[i][0]), int(off_row[i][1])
+                pmask.append(1.0 if a < split else 0.0)
+            else:
+                pmask.append(1.0)
+        return ref.new_tensor(pmask)
+    tok = qproc.tokenizer
+    ids_pre = tok.encode(t_in, add_special_tokens=True)
+    ids_full = tok.encode(full, add_special_tokens=True)
+    n_pre = len(ids_pre)
+    if n_pre <= L and len(ids_full) >= n_pre and list(ids_full[:n_pre]) == list(ids_pre):
+        return ref.new_tensor([1.0 if i < n_pre else 0.0 for i in range(L)])
+    print(
+        "WARN: no offset_mapping and token-prefix split failed; in_prompt=1 for all positions.",
+        file=sys.stderr,
+    )
+    return ref.new_tensor([1.0] * L)
+
+
 def _resolve_mask_token_id(tok) -> int:
     for mid in (tok.mask_token_id, tok.unk_token_id, tok.pad_token_id):
         if mid is not None and int(mid) >= 0:
@@ -171,18 +221,6 @@ def _compute_nll(
     return nll, tid0
 
 
-def _pmask_tensor(off, split: int, L: int, ref: torch.Tensor) -> torch.Tensor:
-    pmask: list[float] = []
-    for i in range(L):
-        if off is not None and i < len(off):
-            a, _b = int(off[i][0]), int(off[i][1])
-            in_prompt = 1.0 if a < split else 0.0
-        else:
-            in_prompt = 1.0
-        pmask.append(in_prompt)
-    return ref.new_tensor(pmask)
-
-
 def _attrib_fallback_ok(e: BaseException) -> bool:
     if isinstance(e, NotImplementedError):
         return True
@@ -206,30 +244,23 @@ def _forward_loss_occlusion(
     """|Δ NLL| when each in-prompt token is replaced by mask id (no backward)."""
     dev = next(qm.parameters()).device
     full = t_in + suffix
-    toks = qproc.tokenizer(
-        full, return_tensors="pt", return_offsets_mapping=True, add_special_tokens=True,
-    )
+    toks, off = _tokenizer_batch(qproc, full, try_offsets=True)
     input_ids = toks["input_ids"].to(dev)
     attn = toks["attention_mask"].to(dev)
-    off = toks.get("offset_mapping")
-    off = off[0] if off is not None else None
-    split = len(t_in)
     L = int(input_ids.shape[1])
+    pmask_t = _in_prompt_mask(qproc, t_in, full, L, off, input_ids.float())
     nll_base, tid0 = _compute_nll(qm, qproc, input_ids, attn, gold_emotion, use_aiv, tid0=None)
     mask_id = _resolve_mask_token_id(qproc.tokenizer)
     sal = torch.zeros(L, device=dev, dtype=torch.float32)
     for i in range(L):
-        if off is not None and i < len(off):
-            a, _b = int(off[i][0]), int(off[i][1])
-            if a >= split:
-                continue
+        if float(pmask_t[i].item()) <= 0.5:
+            continue
         ids2 = input_ids.clone()
         if int(ids2[0, i].item()) == mask_id:
             continue
         ids2[0, i] = mask_id
         nll_i, _ = _compute_nll(qm, qproc, ids2, attn, gold_emotion, use_aiv, tid0=tid0)
         sal[i] = (nll_i - nll_base).abs()
-    pmask_t = _pmask_tensor(off, split, L, sal)
     return nll_base.detach(), sal.detach(), pmask_t, tid0
 
 
@@ -254,18 +285,11 @@ def _forward_loss_gradient(
 ) -> tuple[torch.Tensor, torch.Tensor, "torch.Tensor", int]:
     dev = next(qm.parameters()).device
     full = t_in + suffix
-    toks = qproc.tokenizer(
-        full, return_tensors="pt", return_offsets_mapping=True, add_special_tokens=True,
-    )
+    toks, off = _tokenizer_batch(qproc, full, try_offsets=True)
     input_ids = toks["input_ids"].to(dev)
     attn = toks["attention_mask"].to(dev)
-    off = toks.get("offset_mapping")
-    if off is not None:
-        off = off[0]  # (L,2)
-    else:
-        print("WARN: tokenizer returned no offset_mapping; in_prompt column is 1 for all tokens.",
-              file=sys.stderr)
-    split = len(t_in)
+    L_ids = int(input_ids.shape[1])
+    pmask_t = _in_prompt_mask(qproc, t_in, full, L_ids, off, input_ids.float())
 
     lm = _omni_text_lm(qm)
     emb_w = lm.get_input_embeddings()
@@ -325,7 +349,8 @@ def _forward_loss_gradient(
     emb = emb_out.detach()[0].float()
     sal = (grad.float() * emb).sum(dim=-1).abs()  # (L,)
     L = int(sal.shape[0])
-    pmask_t = _pmask_tensor(off, split, L, sal)
+    if L != int(pmask_t.shape[0]):
+        pmask_t = _in_prompt_mask(qproc, t_in, full, L, off, sal)
     return nll.detach(), sal.detach(), pmask_t, tid0
 
 
@@ -480,7 +505,7 @@ def main() -> None:
                     "error": err_msg[:500],
                 })
                 continue
-        toks = qproc.tokenizer(t_in + suff, return_tensors="pt", return_offset_mapping=True, add_special_tokens=True)
+        toks, _ = _tokenizer_batch(qproc, t_in + suff, try_offsets=False)
         input_ids = toks["input_ids"][0]
         tks = qproc.tokenizer.convert_ids_to_tokens(input_ids)
         L = int(pmask.shape[0])

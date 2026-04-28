@@ -162,6 +162,8 @@ def _forward_loss(
         tid0 = int(ids_emo[0])
         nll = -F.log_softmax(logits, dim=0)[tid0]
         nll.backward()
+        if emb.grad is None:
+            raise RuntimeError("Embedding grad is None after backward (model may not support inputs_embeds grad).")
         grad = emb.grad[0]  # (L, h)
     sal = (grad * emb.detach()[0]).sum(dim=-1).abs()  # (L,)
     L = int(sal.shape[0])
@@ -172,6 +174,7 @@ def _forward_loss(
             in_prompt = 1.0 if a < split else 0.0
         else:
             in_prompt = 1.0
+        pmask.append(in_prompt)
     pmask_t = sal.new_tensor(pmask)
     return nll.detach(), sal.detach(), pmask_t, tid0
 
@@ -293,11 +296,12 @@ def main() -> None:
         try:
             nll, sal, pmask, _tid0 = _forward_loss(qm, qproc, t_in, suff, gold, use_aiv)
         except Exception as e:
-            print(f"[{idx}] {d_id}/{u_id} err: {e!s}", file=sys.stderr)
+            err_msg = f"{type(e).__name__}: {e!s}" if str(e) else f"{type(e).__name__}: (no message) {e!r}"
+            print(f"[{idx}] {d_id}/{u_id} err: {err_msg}", file=sys.stderr)
             all_summ.append({
                 "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
                 "nll": "", "in_prompt_sal_sum": "", "in_prompt_sal_gender": "", "frac_sal_in_gender": "",
-                "n_prompt_tokens": "", "n_gender_in_prompt": "", "error": str(e)[:200],
+                "n_prompt_tokens": "", "n_gender_in_prompt": "", "error": err_msg[:500],
             })
             continue
         toks = qproc.tokenizer(t_in + suff, return_tensors="pt", return_offset_mapping=True, add_special_tokens=True)
@@ -334,12 +338,22 @@ def main() -> None:
         all_summ.append({
             "index": idx, "dialogue_id": d_id, "utterance_id": u_id, "dataset": dtag, "gold_emotion": gold,
             "nll": float(nll.item()), "in_prompt_sal_sum": in_s, "in_prompt_sal_gender": in_g,
-            "frac_sal_in_gender": float(frac), "n_prompt_tokens": n_pr, "n_gender_in_prompt": n_gm, "error": "",
+            "frac_sal_in_gender": float(frac), "n_prompt_tokens": n_pr, "n_gender_in_prompt": n_gm,
+            "error": "OK",
         })
         if idx % 10 == 0:
             print(f"  {idx}/{n_cap} nll={float(nll.item()):.4f} frac_g={frac:.4f}", flush=True)
 
-    ok = [r for r in all_summ if not r.get("error")]
+    ok = []
+    for r in all_summ:
+        if r.get("error") != "OK":
+            continue
+        try:
+            float(r["nll"])
+            float(r["frac_sal_in_gender"])
+        except (TypeError, ValueError):
+            continue
+        ok.append(r)
     if ok:
         m_frac = sum(float(r["frac_sal_in_gender"]) for r in ok) / len(ok)
         m_nll = sum(float(r["nll"]) for r in ok) / len(ok)

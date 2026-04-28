@@ -1,4 +1,4 @@
-index,dialogue_id,utterance_id,dataset,gold_emotion,nll,in_prompt_sal_sum,in_prompt_sal_gender,frac_sal_in_gender,n_prompt_tokens,n_gender_in_prompt,error
-1,51,1,MELD,Joy,,,,,,,NotImplementedError: (no message) NotImplementedError()
-2,170,1,MELD,Surprise,,,,,,,NotImplementedError: (no message) NotImplementedError()
-MEAN(OK),,,,,nan,—,—,nan,—,—,n_ok=0/n=2
+index,dialogue_id,utterance_id,dataset,gold_emotion,nll,in_prompt_sal_sum,in_prompt_sal_gender,frac_sal_in_gender,n_prompt_tokens,n_gender_in_prompt,attrib_method,error
+1,51,1,MELD,Joy,0.0762939453125,0.06673662471621356,0.0028225349451531656,0.042293642466269876,259,19,grad,OK
+2,170,1,MELD,Surprise,0.07984905689954758,0.065758514794652,0.0019745757308555767,0.030027681388816355,272,19,grad,OK
+MEAN(OK),,,,,0.07807150110602379,—,—,0.036160661927543115,—,—,—,n_ok=2/n=2

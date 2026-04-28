@@ -19,6 +19,9 @@ Gradient (preferred): input_ids forward + embedding output hook + grad×embeddin
 Fallback: leave-one-token occlusion — replace each in-prompt token with a mask id, |Δ NLL| vs baseline
         (no autograd). Use --no-occlusion-fallback to disable and surface errors instead.
 
+Forward target:  For Qwen2.5-Omni, always call ``model.thinker`` for logits (the top-level wrapper has no
+        ``forward(input_ids=...)``; only ``generate`` is implemented there).
+
   python reasoning/text_input_attribution.py \\
     --cot-jsonl result/.../cot_generations.jsonl --config yaml/qwen25_MELD_reasoning.yaml
 """
@@ -114,6 +117,17 @@ def _chat_template_string(raw) -> str:
     return str(raw)
 
 
+def _omni_text_lm(qm: torch.nn.Module) -> torch.nn.Module:
+    """Return the module that implements text LM forward with input_ids.
+
+    ``Qwen2_5OmniForConditionalGeneration`` only implements ``generate``; calling
+    ``forward(**{input_ids: ...})`` hits ``_forward_unimplemented``. The actual
+    transformer is ``qm.thinker`` (`Qwen2_5OmniThinkerForConditionalGeneration`).
+    """
+    t = getattr(qm, "thinker", None)
+    return t if t is not None else qm
+
+
 def _resolve_mask_token_id(tok) -> int:
     for mid in (tok.mask_token_id, tok.unk_token_id, tok.pad_token_id):
         if mid is not None and int(mid) >= 0:
@@ -134,6 +148,7 @@ def _compute_nll(
     tid0: int | None = None,
 ) -> tuple[torch.Tensor, int]:
     """Single forward, no grad. Returns (nll scalar tensor, first subword id of gold emotion)."""
+    lm = _omni_text_lm(qm)
     with torch.no_grad():
         fwd_kw = {
             "input_ids": input_ids,
@@ -142,9 +157,9 @@ def _compute_nll(
             "return_dict": True,
         }
         try:
-            out = qm(**fwd_kw, use_audio_in_video=use_aiv)
+            out = lm(**fwd_kw, use_audio_in_video=use_aiv)
         except TypeError:
-            out = qm(**fwd_kw)
+            out = lm(**fwd_kw)
         logits = out.logits[0, -1, :]
         if tid0 is None:
             g = (gold_emotion or "").strip()
@@ -252,7 +267,8 @@ def _forward_loss_gradient(
               file=sys.stderr)
     split = len(t_in)
 
-    emb_w = qm.get_input_embeddings()
+    lm = _omni_text_lm(qm)
+    emb_w = lm.get_input_embeddings()
     saved_emb: list[torch.Tensor] = []
     saved_grad: list[torch.Tensor] = []
     emb_out: torch.Tensor | None = None
@@ -274,9 +290,9 @@ def _forward_loss_gradient(
                 "return_dict": True,
             }
             try:
-                out = qm(**fwd_kw, use_audio_in_video=use_aiv)
+                out = lm(**fwd_kw, use_audio_in_video=use_aiv)
             except TypeError:
-                out = qm(**fwd_kw)
+                out = lm(**fwd_kw)
             logits = out.logits[0, -1, :]
             g = (gold_emotion or "").strip()
             ids_emo = qproc.tokenizer.encode(g, add_special_tokens=False)
